@@ -1,0 +1,12 @@
+{% extends "comparison_survey/base.layout.html" %}
+{% block title %} {{ block.super }} {% endblock title %}
+{% block content %}
+
+    <h1>VoteRate site</h1>
+
+    {% for post in posts %}
+        <h2>{{ post.title }}</h2>
+        <p>By {{ post.author }} on {{ post.date_posted }}</p>
+    {% endfor %}
+
+{% endblock content %}
