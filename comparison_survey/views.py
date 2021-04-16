@@ -18,4 +18,4 @@ def home(request):
     context = {
         'posts': posts
     }
-    return render(request, 'comparison_survey/home.page.html', context)
+    return render(request, 'comparison_survey/home.page.html')
