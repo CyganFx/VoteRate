@@ -1,6 +1,8 @@
 from django.urls import path
-from . import views
+from comparison_survey.views import *
+
 
 urlpatterns = [
-    path('', views.home, name='comparison_survey-home'),
+    path('', get_all_c_surveys),
+    # path('survey/<int:id>/', views.get_c_survey_by_id, name='comparison-survey-by-id'),
 ]

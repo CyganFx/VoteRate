@@ -5,3 +5,7 @@ from .models import *
 # admin details : root - comparison
 admin.site.register(ComparisonSurvey)
 admin.site.register(RateObject)
+admin.site.register(Complaint)
+admin.site.register(ComparisonSurveyResult)
+admin.site.register(Roles)
+admin.site.register(PassedSurvey)

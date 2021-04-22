@@ -1,21 +1,14 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 
-posts = [
-    {
-        'author': 'CoreyMS',
-        'title': 'Blog Post 1',
-        'date_posted': 'August 27'
-    },
-    {
-        'author': 'asd2',
-        'title': 'Blog Post 2',
-        'date_posted': 'August 28'
-    }
-]
+from comparison_survey.models import ComparisonSurvey
 
 
-def home(request):
-    context = {
-        'posts': posts
-    }
-    return render(request, 'comparison_survey/home.page.html', context)
+# shows all already created comparison surveys on home page
+def get_all_c_surveys(request):
+    all_surveys = ComparisonSurvey.objects.order_by('rating')
+    return render(request, 'comparison_survey/home.page.html', {'all_surveys': all_surveys})
+
+
+def get_c_survey_by_id(request, id):
+    c_survey = get_object_or_404(ComparisonSurvey, pk=id)
+    return render(request, 'comparison_survey/home.page.html', {c_survey.id: c_survey})

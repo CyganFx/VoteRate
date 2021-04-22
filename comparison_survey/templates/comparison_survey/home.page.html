@@ -4,9 +4,13 @@
 
     <h1>VoteRate site</h1>
 
-    {% for post in posts %}
-        <h2>{{ post.title }}</h2>
-        <p>By {{ post.author }} on {{ post.date_posted }}</p>
+    {% for survey in all_surveys %}
+        <h2>{{ survey.topic }}</h2>
+        <p> By {{ survey.user_id }}</p><br>
+        <p>Top {{ survey.top_number }}</p><br>
+        <p> : {{ survey.description }}</p><br>
+        <p>Rating: {{ survey.rating }}</p><br><br>
+        <p>created at {{ survey.date_created }}</p>
     {% endfor %}
 
 {% endblock content %}
