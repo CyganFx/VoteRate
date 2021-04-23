@@ -1,0 +1,57 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap");
+
+:root {
+    --main-color-green: #008000
+}
+
+/*========== BASE ==========*/
+*, ::before, ::after {
+    box-sizing: border-box;
+}
+
+body {
+    background-color: green;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+/*========== FLASH ==========*/
+
+div.flash {
+    color: #FFFFFF;
+    font-weight: bold;
+    background-color: var(--main-color-green);
+    padding: 18px;
+    margin-top: 72px;
+    text-align: center;
+    z-index: 999;
+}
+
+.bg-steel {
+    background-color: #5f788a;
+}
+
+.content-section {
+    background: #ffffff;
+    padding: 10px 20px;
+    border: 1px solid #dddddd;
+    border-radius: 3px;
+    margin-bottom: 20px;
+}
+
+.account-img {
+    height: 125px;
+    width: 125px;
+    margin-right: 20px;
+    margin-bottom: 16px;
+}
+
+.account-heading {
+    font-size: 2.5rem;
+}
+
+.testclass {
+    color: red;
+}
