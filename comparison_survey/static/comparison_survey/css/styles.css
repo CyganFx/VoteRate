@@ -1,0 +1,26 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap");
+
+:root {
+    --main-color-green: #008000
+}
+
+/*========== BASE ==========*/
+*, ::before, ::after {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+/*========== FLASH ==========*/
+
+div.flash {
+    color: #FFFFFF;
+    font-weight: bold;
+    background-color: var(--main-color-green);
+    padding: 18px;
+    margin-top: 72px;
+    text-align: center;
+    z-index: 999;
+}

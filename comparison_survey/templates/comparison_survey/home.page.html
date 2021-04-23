@@ -10,7 +10,7 @@
         <p>Top {{ survey.top_number }}</p><br>
         <p> : {{ survey.description }}</p><br>
         <p>Rating: {{ survey.rating }}</p><br><br>
-        <p>created at {{ survey.date_created }}</p>
+        <p>created at {{ survey.date_created|date:"F d, Y" }}</p>
     {% endfor %}
 
 {% endblock content %}
