@@ -1,4 +1,4 @@
-from django.contrib.auth.models import AbstractBaseUser, User
+from django.contrib.auth.models import User
 from django.db import models
 from django.utils import timezone
 
@@ -8,24 +8,6 @@ class Roles(models.Model):
 
     def __str__(self):
         return self.name
-
-
-# class MyAccountManager(BaseUserManager):
-#     def create_user(self, email, username):
-#
-#
-# class User(AbstractBaseUser):
-#     username = models.CharField(max_length=100)
-#     age = models.IntegerField(max_length=100)
-#     gender = models.CharField(max_length=100)
-#     email = models.EmailField(unique=True)
-#     role_id = models.ForeignKey(Roles, on_delete=models.CASCADE)
-#
-#     USERNAME_FIELD = 'email'
-#     REQUIRED_FIELDS = ['username',]
-#
-#     def __str__(self):
-#         return self.username
 
 
 class ComparisonSurvey(models.Model):
