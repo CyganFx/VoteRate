@@ -1,19 +1,3 @@
-{#{% extends "comparison_survey/base.layout.html" %}#}
-{#{% block title %} {{ block.super }} {% endblock title %}#}
-{#{% block content %}#}
-{##}
-{#    <h1 class="testclass">VoteRate site</h1>#}
-{##}
-{#    {% for survey in all_surveys %}#}
-{#        <h2>{{ survey.topic }}</h2>#}
-{#        <p> By {{ survey.user_id }}</p><br>#}
-{#        <p>Top {{ survey.top_number }}</p><br>#}
-{#        <p> : {{ survey.description }}</p><br>#}
-{#        <p>Rating: {{ survey.rating }}</p><br><br>#}
-{#        <p>created at {{ survey.date_created|date:"F d, Y" }}</p>#}
-{#    {% endfor %}#}
-{##}
-{#{% endblock content %}#}
 {% load static %}
 <!doctype html>
 <html lang="en">
@@ -314,14 +298,10 @@
             </div>
         </div>
     </div>
-
-    {% for survey in all_surveys %}
-        <h2>{{ survey.topic }}</h2>
-        <p> By {{ survey.user_id }}</p><br>
-        <p>Top {{ survey.top_number }}</p><br>
-        <p> : {{ survey.description }}</p><br>
-        <p>Rating: {{ survey.rating }}</p><br><br>
-        <p>created at {{ survey.date_created|date:"F d, Y" }}</p>
+    <!--List view of Comparison surveys-->
+    {% for data in dataset %}
+    {{data}}
+    <hr>
     {% endfor %}
 
 </main>
