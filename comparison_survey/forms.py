@@ -1,9 +1,14 @@
-from django.forms import forms
-
-from comparison_survey.models import ComparisonSurvey
+from django import forms
+from comparison_survey.models import ComparisonSurvey, RateObject
 
 
 class ComparisonSurveyForm(forms.ModelForm):
     class Meta:
         model = ComparisonSurvey
-        fields = ('id', 'top_number', 'topic', 'user_id', 'description', 'rating', 'date_created')
+        fields = '__all__'
+
+
+class RateObjectForm(forms.ModelForm):
+    class Meta:
+        model = RateObject
+        fields = '__all__'

@@ -2,12 +2,14 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.utils import timezone
 
-
+# ??? Тек тіркелген юзерлер ғана comparison survey жасай алатын болса, онда Roles моделінің керегі неде? + қосымша проблема туындатады
+'''
 class Roles(models.Model):
     name = models.CharField(max_length=100)
 
     def __str__(self):
         return self.name
+'''
 
 
 class ComparisonSurvey(models.Model):
