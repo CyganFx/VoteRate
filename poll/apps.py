@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class SurveyConfig(AppConfig):
+class PollConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'survey'
+    name = 'poll'

@@ -33,7 +33,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'users.apps.UsersConfig',
     'comparison_survey.apps.ComparisonSurveyConfig',
-    'survey.apps.SurveyConfig',
+    'poll.apps.PollConfig',
     'crispy_forms',
     'django.contrib.admin',
     'django.contrib.auth',
