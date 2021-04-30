@@ -1,0 +1,13 @@
+{% extends "comparison_survey/base.layout.html" %}
+{% block title %} Poll {% endblock title %}
+{% block content %}
+    <h1>List of polls:</h1>
+
+    {% for data in dataset %}
+        Title: {{ data.title }} <br>
+        <img src="{{ data.imageURL }}" alt="image"> <br>
+        Description: {{ data.description }} <br>
+        Rating: {{ data.rating }} <br>
+        Created at: {{ data.createdAt }} <br>
+    {% endfor %}
+{% endblock content %}

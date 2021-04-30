@@ -14,9 +14,9 @@ class Poll(models.Model):
     host_id = models.ForeignKey(User, on_delete=models.CASCADE)
     category_id = models.ForeignKey(Category, on_delete=models.CASCADE)
     title = models.CharField(max_length=100)
-    imageURL = models.CharField(max_length=500)
+    imageURL = models.CharField(default='', max_length=500)
     description = models.TextField()
-    rating = models.FloatField()
+    rating = models.FloatField(default=0)
     createdAt = models.DateTimeField(default=timezone.now)
 
     def __str__(self):

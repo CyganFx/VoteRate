@@ -1,0 +1,21 @@
+{% extends "comparison_survey/base.layout.html" %}
+{% load crispy_forms_tags %}
+{% block title %} Poll {% endblock title %}
+{% block content %}
+    <h1>Create Poll</h1>
+    //TODO host _id should be hidden
+
+    <form method="post" action="poll/create">
+        {% csrf_token %}
+        {{ form|crispy }}
+
+        <button>-Button for adding question</button>
+        <br>
+        <button>--Button for adding answer option to the question</button>
+        <br>
+        <input type="submit" value="Submit">
+    </form>
+
+
+
+{% endblock content %}

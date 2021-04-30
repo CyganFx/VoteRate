@@ -1,0 +1,12 @@
+{% extends "comparison_survey/base.layout.html" %}
+{% block title %} Poll {% endblock title %}
+{% block content %}
+    <h1>Poll Page</h1>
+
+    {{ poll.title }} <br>
+    <img src="{{ poll.imageURL }}" alt="image"> <br>
+    {{ poll.description }} <br>
+    {{ poll.rating }} <br>
+    {{ poll.createdAt }} <br>
+
+{% endblock content %}
