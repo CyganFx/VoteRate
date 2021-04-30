@@ -1,4 +1,6 @@
 from django.shortcuts import render
+from .forms import CreateSurveyForm
+from .models import Survey
 
 posts = [
     {
@@ -15,7 +17,20 @@ posts = [
 
 
 def home(request):
+    context = {}
+    return render(request, 'comparison_survey/home.html', context)
+
+def create(request):
+    form = CreateSurveyForm()
     context = {
-        'posts': posts
+        'form' : form
     }
-    return render(request, 'comparison_survey/home.page.html')
+    return render(request, 'comparison_survey/create.html', context)
+
+def results(request):
+    context = {}
+    return render(request, 'comparison_survey/results.html', context)
+
+def vote(request):
+    context = {}
+    return render(request, 'comparison_survey/vote.html', context)
