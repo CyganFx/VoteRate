@@ -5,9 +5,14 @@
 
     {% for data in dataset %}
         Title: {{ data.title }} <br>
-        <img src="{{ data.imageURL }}" alt="image"> <br>
+        <img src="{{ data.imageURL }}" alt="image" height="200px" width="200px"> <br>
         Description: {{ data.description }} <br>
         Rating: {{ data.rating }} <br>
         Created at: {{ data.createdAt }} <br>
+        <a href="/poll/{{ data.id }}">Pass now</a>
+        <form action="post">
+            <button>Rate poll!</button>
+        </form>
     {% endfor %}
+
 {% endblock content %}

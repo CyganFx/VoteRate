@@ -1,5 +1,4 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.utils import timezone
 
 from .forms import *
 from .models import *
@@ -12,8 +11,29 @@ def getAll(request, template='poll/home.page.html'):
 
 def getByID(request, id, template='poll/poll.page.html'):
     poll = get_object_or_404(Poll, pk=id)
+    pollQuestions = PollQuestion.objects.filter(poll_id=id).order_by('id')
+    tempPollAnswers = []
+    for pollQuestion in pollQuestions:
+        tempPollAnswers.append(list(PollAnswer.objects.filter(poll_id=id, question_id=pollQuestion.id).order_by('id')))
 
-    return render(request, template, {'poll': poll})
+    pollAnswers = []
+
+    for answer in tempPollAnswers:
+        pollAnswers.append(answer)
+
+    res = []
+
+    for answer in pollAnswers:
+        for val in answer:
+            res.append(val)
+
+    context = {
+        'poll': poll,
+        'pollQuestions': pollQuestions,
+        'pollAnswers': res,
+    }
+
+    return render(request, template, context)
 
 
 def createPoll(request, template='poll/create.page.html'):
