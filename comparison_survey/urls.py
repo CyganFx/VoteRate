@@ -27,17 +27,17 @@ delete survey - /my-surveys/remove/id - survey.edit.page.html, survey.page.html 
 
 urlpatterns = [
     # for any user
-    path('', RetrieveAllComparisonSurvey, name='comparison_survey-home'),
-    path('<int:id>', RetrieveComparisonSurveyById, name='comparison_survey-by-id'),
+    path('', RetrieveAllComparisonSurvey, name='comparison-survey-home'),
+    path('<int:id>', RetrieveComparisonSurveyById, name='comparison-survey-by-id'),
     # TODO - implement search view for comparison survey
     # path('search/<int:num>'),
     # path('search/<str:topic>'),
     # path('search/<int:year>/<int:month>'),  # experiment
     # for authorized users
-    path('my-surveys', RetrieveCreatorComparisonSurveys),
-    path('my-surveys/<int:id>', RetrieveComparisonSurveyOfCreatorById),
-    path('my-surveys/edit', CreateComparisonSurvey),
-    path('my-surveys/edit/<int:id>', UpdateComparisonSurvey),
-    path('my-surveys/remove/<int:id>', DeleteComparisonSurvey),
+    path('my_surveys', RetrieveCreatorComparisonSurveys, name='my-surveys'),
+    path('my_surveys/<int:id>', RetrieveComparisonSurveyOfCreatorById, name='my-surveys'),
+    path('my_surveys/edit', CreateComparisonSurvey, name='my-surveys-new'),
+    path('my_surveys/edit/<int:id>', UpdateComparisonSurvey, name='my-surveys-change'),
+    path('my_surveys/remove/<int:id>', DeleteComparisonSurvey, name='my-surveys-delete'),
     # TODO - RateObject model CRUD urls needed to be implemented
 ]
