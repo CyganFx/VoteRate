@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Rate Objects</title>
+</head>
+<body>
+<p>Create Rate object</p>
+
+    <form method="POST">
+    {% csrf_token %}
+        {{ form.as_p }}
+    <button type="submit" class="save btn btn-default">Save</button>
+    </form>
+</body>
+</html>

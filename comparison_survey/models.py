@@ -17,8 +17,7 @@ class ComparisonSurvey(models.Model):
     topic = models.CharField(max_length=100)
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     description = models.TextField()
-    # rate_objects = list(RateObject)
-    rating = models.IntegerField()
+    rating = models.FloatField(default=0.0)
     date_created = models.DateTimeField(default=timezone.now)
 
     def __str__(self):

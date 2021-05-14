@@ -6,6 +6,7 @@ class ComparisonSurveyForm(forms.ModelForm):
     class Meta:
         model = ComparisonSurvey
         fields = '__all__'
+        exclude = ('user_id', 'rating', 'date_created',)
 
 
 class RateObjectForm(forms.ModelForm):

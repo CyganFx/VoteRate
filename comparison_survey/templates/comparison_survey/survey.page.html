@@ -2,9 +2,30 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Survey</title>
 </head>
 <body>
+
+<h1>{{ survey.topic }} - <span>{{ survey.rating }}</span></h1>
+<p>Description: <br>{{ survey.description }}</p>
+<p>Created at {{ survey.date_created }}</p>
+
+<button>Pass survey</button>
+
+<h3>Rate Objects</h3>
+
+{% if rateObjects %}
+    {% for ro in rateObjects %}
+          <div>
+                <p>{{ ro.description }}</p>
+                <p><img src="{{ ro.media }}" alt="object-media"></p>
+          </div>
+    {% endfor %}
+
+    {% else %}
+    <p>No rating objects added. Please, check later</p>
+{% endif %}
+
 
 </body>
 </html>

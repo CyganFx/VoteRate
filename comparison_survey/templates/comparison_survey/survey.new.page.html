@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Survey - New</title>
+</head>
+<body>
+<form method="POST" action="{% url 'my-surveys-new'%}">
+    {% csrf_token %}
+        {{ form.as_p }}
+    <button type="submit" class="save btn btn-default">Save</button>
+</form>
+</body>
+</html>

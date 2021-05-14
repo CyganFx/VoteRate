@@ -2,9 +2,42 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Survey</title>
 </head>
 <body>
+{% if user.is_authenticated %}
+<h1>{{ survey.topic }} - <span>{{ survey.rating }}</span></h1>
+<p>Description: <br>{{ survey.description }}</p>
+<p>Created at {{ survey.date_created }}</p>
+
+                        <form action="{% url 'my-surveys-delete' survey.id%}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="save btn btn-default">Delete Survey</button>
+                        </form>
+
+<h3>Rate Objects</h3>
+
+    <a href="{% url 'rate-object-new'%}">Create Rate object</a>
+
+{% if rateObjects %}
+    {% for ro in rateObjects %}
+          <div>
+                <p>{{ ro.description }}</p>
+                <p><img src="{{ ro.media }}" alt="object-media"></p>
+
+                        <form action="{% url 'rate-object-delete' ro.id%}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="save btn btn-default">X</button>
+                        </form>
+
+          </div>
+    {% endfor %}
+
+    {% else %}
+    <p>No rating objects found. Please, add new objects</p>
+{% endif %}
+
+{% endif %}
 
 </body>
 </html>
