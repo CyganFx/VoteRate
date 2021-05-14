@@ -32,7 +32,7 @@
                     {% else %}
                         <a class="nav-link" href="{% url 'login' %}">Login/register</a>
                     {% endif %}
-                        <a class="nav-link" href="{% url 'poll-home' %}">Polls</a>
+                    <a class="nav-link" href="{% url 'poll-home' %}">Polls</a>
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
@@ -83,5 +83,78 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
         crossorigin="anonymous"></script>
+
+<script>
+    var questionsCounter = 0
+    var answersCounter = 0
+
+    function addQuestion() {
+        questionsCounter++
+        document.getElementById("total_questions_counter").value = questionsCounter
+        let questions = document.getElementById("questions")
+        let div = document.createElement('div');
+        div.className = 'question';
+        div.id = `question${questionsCounter}`
+        div.innerHTML = `
+            <br>
+           <label>Question ${questionsCounter}: </label>
+            <input type="text" name="question${questionsCounter}" value="" />
+            <input type="hidden" name="question${questionsCounter}_answersCounter" id="question${questionsCounter}_answersCounter" value="0">
+            <input type="button" value="Add Answer Option" onclick="addAnswer(${div.id}, ${questionsCounter})" />
+            <input type="button" value="Remove Question" onclick="removeQuestion(this, ${questionsCounter})" />
+
+            <div class="answers" id="answers_question${questionsCounter}">
+
+            </div>
+  `;
+        questions.appendChild(div);
+    }
+
+    function addAnswer(questionID, questionsCounter) {
+        answersCounter++
+        document.getElementById("total_answers_counter").value = answersCounter.toString()
+        let localAnswersCounterElem = document.getElementById(`question${questionsCounter}_answersCounter`)
+        let localAnswersCounter = parseInt(localAnswersCounterElem.value) + 1
+        localAnswersCounterElem.value = localAnswersCounter
+
+        let answers = document.getElementById(`answers_question${questionsCounter}`)
+        let div = document.createElement('div');
+        div.className = 'answer';
+        div.id = `answer${answersCounter}`
+
+        div.innerHTML = `
+        <br>
+        <label>Answer Option ${localAnswersCounter} for question ${questionsCounter}: </label>
+         <input type="text" name="answer${localAnswersCounter}_question${questionsCounter}" id="answer${localAnswersCounter}_question${questionsCounter}" value="" />
+         <input type="button" onclick="removeAnswer(${answersCounter}, ${questionsCounter})" value="Delete answer"/>
+         <br>`
+        answers.appendChild(div);
+    }
+
+    function removeQuestion(input, localQuestionsCounter) {
+        let localAnswersCounterElem = document.getElementById(`question${localQuestionsCounter}_answersCounter`)
+        document.getElementById("total_answers_counter").value = answersCounter - localAnswersCounterElem.value
+        localAnswersCounterElem.value = 0
+
+        document.getElementById('questions').removeChild(input.parentNode);
+        questionsCounter--
+        document.getElementById("total_questions_counter").value = questionsCounter
+
+        console.log(document.getElementById("total_questions_counter").value)
+        console.log(document.getElementById("total_answers_counter").value)
+    }
+
+    function removeAnswer(localAnswersCounter, localQuestionsCounter) {
+        let elem = document.getElementById(`answer${localAnswersCounter}`)
+        elem.parentNode.removeChild(elem)
+
+        answersCounter--
+        document.getElementById("total_answers_counter").value = answersCounter
+
+        let localAnswersCounterElem = document.getElementById(`question${localQuestionsCounter}_answersCounter`)
+        localAnswersCounterElem.value = parseInt(localAnswersCounterElem.value) - 1
+    }
+</script>
+
 </body>
 </html>

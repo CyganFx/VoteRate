@@ -3,17 +3,37 @@
 {% block title %} Poll {% endblock title %}
 {% block content %}
     <h1>Create Poll</h1>
-    //TODO host _id should be hidden
 
-    <form method="post" action="poll/create">
+    <form method="POST" action="{% url 'poll-create' %}">
         {% csrf_token %}
-        {{ form|crispy }}
+        <input type="hidden" name="host_id" value="">
+        <label>Category: </label>
+        <select name="category_id">
+            {% for category in categories %}
+                <option value="{{ category.id }}">{{ category.name }}</option>
+            {% endfor %}
+        </select>
+        <br>
+        <label>Title: </label>
+        <input type="text" name="title" value="">
+        <br>
+        <label>Image URL: </label>
+        <input type="text" name="imageURL" value="">
+        <br>
+        <label>Description: </label>
+        <textarea name="description" cols="30" rows="10"></textarea>
+        <br>
+        <div class="questions_answers" id="questions_answers">
+            <div class="questions" id="questions"></div>
+            <input type="hidden" name="total_questions_counter" id="total_questions_counter" value="">
+            <input type="hidden" name="total_answers_counter" id="total_answers_counter" value="">
+        </div>
 
-        <button>-Button for adding question</button>
-        <br>
-        <button>--Button for adding answer option to the question</button>
-        <br>
-        <input type="submit" value="Submit">
+        <br><br>
+
+        <input type="submit" value="Create Poll">
+
     </form>
-
+    <br>
+    <button onclick="addQuestion()">Add question</button>
 {% endblock content %}

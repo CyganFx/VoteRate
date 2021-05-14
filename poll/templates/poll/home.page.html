@@ -1,6 +1,9 @@
 {% extends "comparison_survey/base.layout.html" %}
 {% block title %} Poll {% endblock title %}
 {% block content %}
+
+    <h2>Number of polls already passed: {{ numOfPollsPassed }}</h2>
+
     <h1>List of polls:</h1>
 
     {% for data in dataset %}
@@ -9,9 +12,24 @@
         Description: {{ data.description }} <br>
         Rating: {{ data.rating }} <br>
         Created at: {{ data.createdAt }} <br>
+        {% for poll_id in passedPolls %}
+            {% if poll_id == data.id %}
+                <p>You have passed this poll already</p>
+            {% endif %}
+        {% endfor %}
         <a href="/poll/{{ data.id }}">Pass now</a>
-        <form action="post">
-            <button>Rate poll!</button>
+        <form method="post" action="{% url 'poll-rate' %}">
+            {% csrf_token %}
+            <input type="hidden" name="poll_id" value="{{ data.id }}">
+            <label>Rate poll: </label>
+            <select name="rate">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+            </select>
+            <input type="submit" value="Rate">
         </form>
     {% endfor %}
 

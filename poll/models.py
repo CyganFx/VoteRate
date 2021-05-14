@@ -42,10 +42,9 @@ class PollAnswer(models.Model):
 
 class PollVote(models.Model):
     poll_id = models.ForeignKey(Poll, on_delete=models.CASCADE)
-    question_id = models.ForeignKey(PollQuestion, on_delete=models.CASCADE)
     answer_id = models.ForeignKey(PollAnswer, on_delete=models.CASCADE)
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     passedAt = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
-        return self.user_id
+        return f'{self.user_id} {self.poll_id} {self.answer_id} {self.passedAt}'

@@ -2,19 +2,24 @@
 {% block title %} Poll {% endblock title %}
 {% block content %}
     <h1>Poll Page</h1>
-
-    <h2>Title: {{ poll.title }}</h2>
-    <img src="{{ poll.imageURL }}" alt="image" height="200px" width="200px"> <br>
-    <h3>Description: {{ poll.description }} </h3>
-    <h3>Questions: </h3>
-    {% for pollQuestion in pollQuestions %}
-        Question: {{ pollQuestion.content }}<br>
-        {% for pollAnswer in pollAnswers %}
-            {% if pollAnswer.question_id.id == pollQuestion.id %}
-                <input type="radio" value="{{ pollAnswer.id }}">{{ pollAnswer.content }}<br>
-            {% endif %}
+    <form method="post" action="{% url 'poll-vote' %}">
+        {% csrf_token %}
+        <h2>Title: {{ poll.title }}</h2>
+        <img src="{{ poll.imageURL }}" alt="image" height="200px" width="200px"> <br>
+        <h3>Description: {{ poll.description }} </h3>
+        <h3>Questions: </h3>
+        <input type="hidden" name="numOfQuestions" value="{{ numOfQuestions }}">
+        <input type="hidden" name="poll_id" value="{{ poll.id }}">
+        {% for pollQuestion in pollQuestions %}
+            <input type="hidden" name="questionStartingID{{ forloop.counter }}" value="{{ pollQuestion.id }}">
+            <h4>Question: {{ pollQuestion.content }}</h4>
+            {% for pollAnswer in pollAnswers %}
+                {% if pollAnswer.question_id.id == pollQuestion.id %}
+                    <input type="radio" name="answer_for_question{{ pollAnswer.question_id.id }}"
+                           value="{{ pollAnswer.id }}">{{ pollAnswer.content }}<br>
+                {% endif %}
+            {% endfor %}
         {% endfor %}
-    {% endfor %}
-    <input type="submit" value="Submit">
-
+        <input type="submit" value="Submit">
+    </form>
 {% endblock content %}
