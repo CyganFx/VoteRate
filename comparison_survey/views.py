@@ -6,9 +6,6 @@ from .forms import ComparisonSurveyForm, RateObjectForm
 from .models import ComparisonSurvey, RateObject
 
 
-# TODO - implement search view for comparison survey
-# TODO - implement CRUD for rateObject model (comparison objects)
-
 # #### Comparison Survey views (CRUD) ####
 
 # FOR ANY USERS
