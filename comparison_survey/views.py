@@ -1,38 +1,43 @@
-from django.http import Http404
+from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
-
+from django.views.generic import ListView, DetailView, CreateView
 from .forms import ComparisonSurveyForm, RateObjectForm
 from .models import ComparisonSurvey, RateObject
 
 
 # #### Comparison Survey views (CRUD) ####
 
-# FOR ANY USERS
+# FOR ANY USER
 
-def RetrieveAllComparisonSurvey(request, template='comparison_survey/home.page.html'):
-    """Returns all comparison surveys - home.page.html"""
-    dataset = ComparisonSurvey.objects.all()
-    context = {
-        'dataSet': dataset,
-    }
-    return render(request, template, context=context)
+class ComparisonSurveyAll(ListView):
+    """Returns all comparison surveys - csurvey.index.page.html"""
+    model = ComparisonSurvey
+    template_name = 'comparison_survey/csurvey.index.page.html'
+    paginate_by = 12
+    queryset = ComparisonSurvey.objects.all().order_by('-rating')
+    context_object_name = 'cSurveys'
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(ComparisonSurveyAll, self).get_context_data(*args, **kwargs)
+        context['total'] = ComparisonSurvey.objects.all().count()
+        return context
 
 
-def RetrieveComparisonSurveyById(request, id, template='comparison_survey/survey.page.html'):
-    """Returns exact comparison survey by id - survey.page.html"""
-    try:
-        survey = ComparisonSurvey.objects.get(id=id)
-        rateObjects = RateObject.objects.filter(survey_id=id)
-        context = {
-            'survey': survey,
-            'rateObjects': rateObjects,
-        }
+class ComparisonSurveyDetail(DetailView):
+    """Returns exact comparison survey by id - csurvey.single.page.html"""
+    model = ComparisonSurvey
+    template_name = 'comparison_survey/csurvey.single.page.html'
+    context_object_name = 'survey'
 
-    except ComparisonSurvey.DoesNotExist:
-        raise Http404('Data does not exist')
+    def get_context_data(self, *args, **kwargs):
+        context = super(ComparisonSurveyDetail, self).get_context_data(*args, **kwargs)
+        context['rateObjects'] = RateObject.objects.all().filter(survey_id=self.object.id)
 
-    return render(request, template, context=context)
+        cs_object = self.get_object()
+        cs_object.views += 1
+        cs_object.save()
+        return context
 
 
 # FOR AUTHORIZED USERS ONLY
@@ -40,7 +45,7 @@ def RetrieveComparisonSurveyById(request, id, template='comparison_survey/survey
 def RetrieveCreatorComparisonSurveys(request, template='comparison_survey/dashboard.page.html'):
     """Returns all surveys created by exact user (user id retrieved from request.user) - dashboard.page.html"""
     try:
-        creatorSurveys = ComparisonSurvey.objects.filter(user_id=request.user.id)
+        creatorSurveys = ComparisonSurvey.objects.filter(author=request.user.id)
         context = {
             'mySurveys': creatorSurveys,
         }
@@ -50,7 +55,7 @@ def RetrieveCreatorComparisonSurveys(request, template='comparison_survey/dashbo
 
 
 def RetrieveComparisonSurveyOfCreatorById(request, id, template='comparison_survey/survey.edit.page.html'):
-    """Returns exact comparison survey by id - survey.page.html"""
+    """Returns exact comparison survey by id - csurvey.single.page.html"""
     try:
         survey = ComparisonSurvey.objects.get(id=id)
         rateObjects = RateObject.objects.filter(survey_id=id)
@@ -64,15 +69,18 @@ def RetrieveComparisonSurveyOfCreatorById(request, id, template='comparison_surv
     return render(request, template, context=context)
 
 
-def CreateComparisonSurvey(request, template='comparison_survey/survey.new.page.html'):
+class CreateComparisonSurvey(CreateView):
     """Used to create comparison survey and redirect user after creation to the user's surveys dashboard - survey.edit.page.html"""
-    form = ComparisonSurveyForm(request.POST or None)
-    if form.is_valid():
-        form.instance.user_id_id = request.user.id
-        form.instance.date_created = timezone.now()
-        form.save()
-        return redirect('my-surveys-all')
-    return render(request, template, {'form': form})
+    model = ComparisonSurvey
+    form_class = ComparisonSurveyForm
+    template_name = 'comparison_survey/survey.new.page.html'
+    success_url = '../my_surveys/all'
+
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        self.object.author = self.request.user
+        self.object.save()
+        return HttpResponseRedirect(self.get_success_url())
 
 
 def UpdateComparisonSurvey(request, id, template='comparison_survey/survey.edit.page.html'):
@@ -86,7 +94,7 @@ def UpdateComparisonSurvey(request, id, template='comparison_survey/survey.edit.
 
 
 def DeleteComparisonSurvey(request, id, template='comparison_survey/survey.edit.page.html'):
-    """Used to delete comparison survey record - survey.edit.page.html, survey.page.html"""
+    """Used to delete comparison survey record - survey.edit.page.html, csurvey.single.page.html"""
     try:
         data = get_object_or_404(ComparisonSurvey, id=id)
     except Exception:
@@ -111,7 +119,7 @@ def CreateRateObject(request, template='comparison_survey/rateobj.new.page.html'
 
 
 def DeleteRateObject(request, id, template='comparison_survey/survey.edit.page.html'):
-    """Used to delete comparison survey record - survey.edit.page.html, survey.page.html"""
+    """Used to delete comparison survey record - survey.edit.page.html, csurvey.single.page.html"""
     try:
         data = get_object_or_404(RateObject, id=id)
     except Exception:

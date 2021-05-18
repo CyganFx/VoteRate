@@ -1,0 +1,45 @@
+{% extends "comparison_survey/csurvey.base.layout.html" %}
+
+<!--USER's CSURVEYS PAGE. LATER WOULD BE ADDED STATISTICS (number of views total, number of created csurveys)-->
+
+{% block title %}{{ survey.topic }}{% endblock %}
+
+{% block contents %}
+        <div>
+
+            <hr>
+            <div>
+                rate action here
+            </div>
+            <hr>
+
+            <h1>{{ survey.topic }}</h1>
+                <span>Rating: {{ survey.rating }}</span>
+            <p>Created at {{ survey.date_created|date:'d.m.Y' }}</p>
+            <hr>
+
+                <p>Description: <br>{{ survey.description }}</p>
+        </div>
+
+        <h3>Rate Objects</h3>
+
+        {% if rateObjects %}
+            <a href="#">Pass Survey</a>
+            {% for ro in rateObjects %}
+                <div>
+                    <p>{{ ro.description }}</p>
+                    <div>
+                        <p><img src="{{ ro.media }}" alt="object-media"></p>
+                    </div>
+                </div>
+            {% endfor %}
+
+        {% else %}
+            <p>No rating objects added. Please, check later</p>
+        {% endif %}
+            <a href="#">Show results (this will redirect to statistics page, where also avalable discussion)</a>
+        <div>
+            complaint form here
+        </div>
+
+{% endblock %}

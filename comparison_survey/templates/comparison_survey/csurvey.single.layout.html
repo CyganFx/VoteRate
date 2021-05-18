@@ -1,0 +1,20 @@
+{% load static %}
+{% extends "comparison_survey/csurvey.base.layout.html" %}
+
+<!--LAYOUT FOR COMPARISON SURVEY APP TO RENDER SINGLE RECORD-->
+
+{% block contents %}
+
+    {% block creator-features %}
+       <!--RENDER HERE CREATOR FEATURES LIKE EDIT, DELETE-->
+    {% endblock %}
+
+    {% block rate-objects-features %}
+        <!--RENDER HERE RATE OBJECTS FORMS, DELETE ACTIONS-->
+    {% endblock %}
+
+    {% block statistics %}
+        <!--RENDER HERE COMPARISON SURVEY STATISTICS-->
+    {% endblock %}
+
+{% endblock %}
