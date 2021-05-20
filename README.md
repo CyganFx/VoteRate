@@ -1,8 +1,9 @@
-#VoteRate application
+# VoteRate application
 
-##Dependencies:
+## Dependencies:
 ```commandline
     pip install django-crispy-forms
+    pip install Pillow
 ```
 
 Create admin with this command in terminal:

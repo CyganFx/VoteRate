@@ -1,0 +1,74 @@
+{% extends "comparison_survey/csurvey.base.layout.html" %}
+
+<!--USER's CSURVEYS PAGE. LATER WOULD BE ADDED STATISTICS (number of views total, number of created csurveys)-->
+
+{% block title %}{{ survey.topic }}{% endblock %}
+
+{% block contents %}
+
+    {% if user.is_authenticated %}
+            <div>
+            <hr>
+                <h1>{{ survey.topic }}</h1>
+                    <span>Rating: {{ survey.rating }}</span>
+                    <span>{{ survey.views }} times viewed</span>
+                <h3>Top items number: {{ survey.top_number }} </h3>
+                <p>Created at {{ survey.date_created|date:'d.m.Y' }}</p>
+            <hr>
+
+                <p>Description: <br>{{ survey.description }}</p>
+        </div>
+
+        <h3>Rate Objects</h3>
+
+        <hr>
+            <div>
+                <h3>Rate object add form</h3>
+                <form action="{% url 'rate-object-new' survey.id%}" method="POST">
+                {% csrf_token %}
+                    {{ create_ro_form.as_p }}
+                <button type="submit" class="save btn btn-default">Add new</button>
+                </form>
+            </div>
+        <hr>
+
+        {% if rateObjects %}
+            <h4>Total: {{ total_ro }}</h4>
+            <table>
+                <tr>
+                    <th>Description</th>
+                    <th>Media</th>
+                    <th>Action</th>
+                </tr>
+            {% for ro in rateObjects %}
+                <tr>
+                    <td>{{ ro.description }}</td>
+
+                    <td>
+                        <p><img src="{{ ro.media }}" alt="object-media"></p>
+                    </td>
+
+                    <td>
+                         <form action="{% url 'rate-object-delete' ro.pk%}" method="post">
+                            {% csrf_token %}
+                            <button type="submit">&#9746;</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+            </table>
+
+        {% else %}
+
+            <p>No rating objects found. Let's add them</p>
+
+        {% endif %}
+
+            <a href="#">Show results (this will redirect to statistics page, where also avalable discussion and special details for creator)</a>
+
+        {% else %}
+            <p>Please, <a href="{% url 'login' %}">Sign in</a> or
+          <a href="{% url 'register' %}">Sign Up</a></p>
+    {% endif %}
+
+{% endblock %}

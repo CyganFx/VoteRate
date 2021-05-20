@@ -1,0 +1,16 @@
+{% extends "comparison_survey/csurvey.base.layout.html" %}
+
+<!--USER's CSURVEYS PAGE. LATER WOULD BE ADDED STATISTICS (number of views total, number of created csurveys)-->
+
+{% block title %}New{% endblock %}
+
+{% block contents %}
+
+<form method="POST" action="{% url 'my-surveys-new'%}">
+    {% csrf_token %}
+        {{ form.as_p }}
+    <button type="submit">Save</button>
+    <a href="{% url 'my-surveys-all' %}">Cancel</a>
+</form>
+
+{% endblock %}

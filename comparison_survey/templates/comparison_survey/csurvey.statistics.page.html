@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<div>
+    Statistics about rate objects here
+</div>
+
+{% if user.is_authenticated %}
+                    <h4>Rate this survey</h4>
+                        <form action="{% url 'comparison-survey-rate' survey.pk%}" method="post">
+                            {% csrf_token %}
+                            {% for i in '1234567'|make_list %}
+                                <label>&#129321<input type="radio" name="mark" value="{{forloop.counter}}"></label>
+                            {%endfor%}
+                            <input type="submit" name="" value="&#9745;">
+                        </form>
+                    {% else %}
+                    To rate this Comparison Survey, please, Sign up or Sign in.
+{% endif %}
+
+        <div>
+            complaint form here
+        </div>
+
+</body>
+</html>

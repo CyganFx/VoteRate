@@ -1,68 +1,50 @@
-from django.contrib.auth.models import AbstractBaseUser, User
+from django.contrib.auth.models import User
 from django.db import models
 from django.utils import timezone
 
 
-class Roles(models.Model):
-    name = models.CharField(max_length=100)
-
-    def __str__(self):
-        return self.name
-
-
-# class MyAccountManager(BaseUserManager):
-#     def create_user(self, email, username):
-#
-#
-# class User(AbstractBaseUser):
-#     username = models.CharField(max_length=100)
-#     age = models.IntegerField(max_length=100)
-#     gender = models.CharField(max_length=100)
-#     email = models.EmailField(unique=True)
-#     role_id = models.ForeignKey(Roles, on_delete=models.CASCADE)
-#
-#     USERNAME_FIELD = 'email'
-#     REQUIRED_FIELDS = ['username',]
-#
-#     def __str__(self):
-#         return self.username
-
-
 class ComparisonSurvey(models.Model):
-    top_number = int
-    topic = models.CharField(max_length=100)
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
-    description = models.TextField()
-    # rate_objects = list(RateObject)
-    rating = models.IntegerField()
+    """
+    top_number is formed due to the number of rate-objects that belongs to survey
+    views, rating fields used for statistical data
+    """
+    top_number = models.IntegerField(default=0)
+    topic = models.CharField(max_length=100, help_text='create catchy topics...')
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    description = models.TextField(max_length=500, help_text='words are free... but not more than 500 symbols')
+    rating = models.FloatField(default=0.0)
     date_created = models.DateTimeField(default=timezone.now)
+    views = models.IntegerField(default=0)
 
     def __str__(self):
         return self.topic
 
 
 class RateObject(models.Model):
-    description = models.TextField()
-    media = models.CharField(max_length=100)
-    survey_id = models.ForeignKey(ComparisonSurvey, on_delete=models.CASCADE)
+    """model used to define objects of vote/rate action"""
+    description = models.TextField(max_length=50, help_text='rate object name here...')
+    media = models.CharField(max_length=150, help_text='url of image here...')
+    survey = models.ForeignKey(ComparisonSurvey, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.description
 
 
 class ComparisonSurveyResult(models.Model):
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
-    survey_id = models.ForeignKey(ComparisonSurvey, on_delete=models.CASCADE)
-    rate_object_id = models.ForeignKey(RateObject, on_delete=models.CASCADE)
+    """keeps track of chosen rate records"""
+    respondent = models.ForeignKey(User, on_delete=models.CASCADE)
+    survey = models.ForeignKey(ComparisonSurvey, on_delete=models.CASCADE)
+    rate_object = models.ForeignKey(RateObject, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.id
 
 
 class Complaint(models.Model):
-    survey_id = models.ForeignKey(ComparisonSurvey, on_delete=models.CASCADE)
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
-    reason = models.TextField()
+    """used by moderators"""
+    survey = models.ForeignKey(ComparisonSurvey, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    reason = models.TextField(max_length=100, help_text='please indicate the reason for the complaint')
     date_added = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
@@ -70,8 +52,9 @@ class Complaint(models.Model):
 
 
 class PassedSurvey(models.Model):
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
-    survey_id = models.ForeignKey(ComparisonSurvey, on_delete=models.CASCADE)
+    """keeps track of user activity"""
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    survey = models.ForeignKey(ComparisonSurvey, on_delete=models.CASCADE)
     last_passed_date = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
