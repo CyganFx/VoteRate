@@ -37,7 +37,7 @@ class ComparisonSurveyResult(models.Model):
     rate_object = models.ForeignKey(RateObject, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.id
+        return str(self.id)
 
 
 class Complaint(models.Model):
@@ -48,7 +48,7 @@ class Complaint(models.Model):
     date_added = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
-        return self.id
+        return self.reason
 
 
 class PassedSurvey(models.Model):

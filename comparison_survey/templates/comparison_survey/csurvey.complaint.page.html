@@ -1,0 +1,36 @@
+{% extends "comparison_survey/csurvey.base.layout.html" %}
+
+<!-- THIS IS MODERATOR PAGE
+ -->
+
+{% block title %} Moderation{% endblock %}
+
+{% block contents %}
+    {% if user.is_authenticated %}
+        <h2>Complaints for {{ survey.topic }}</h2>
+        <h3>Description:</h3>
+        <p>{{ survey.description }}</p>
+
+        {% if complaints %}
+            <table>
+                <tr>
+                    <th>#</th>
+                    <th>User</th>
+                    <th>Reason</th>
+                    <th>Date</th>
+                </tr>
+                {% for c in complaints %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ c.user.username }}</td>
+                        <td>{{ c.reason }}</td>
+                        <td>{{ c.date_added }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        {% endif %}
+    {% else %}
+            <p>Please, <a href="{% url 'login' %}">Sign in</a> or
+            <a href="{% url 'register' %}">Sign Up</a></p>
+    {% endif %}
+{% endblock %}

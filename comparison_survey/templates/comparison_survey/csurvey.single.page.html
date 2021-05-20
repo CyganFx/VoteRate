@@ -22,8 +22,10 @@
         <h3>Rate Objects</h3>
 
         {% if rateObjects %}
-
+            <!--Without any rate object there is no any result, no need to leave complaint-->
             <a href="#">Pass Survey</a>
+            <a href="{% url 'comparison-survey-statistics' survey.id%}">Show results</a>
+            <a href="{% url 'comparison-survey-feedback' survey.id%}">Leave feedback</a>
 
             {% for ro in rateObjects %}
                 <div>
@@ -33,10 +35,8 @@
                     </div>
                 </div>
             {% endfor %}
-
         {% else %}
             <p>No rating objects added. Please, check later</p>
         {% endif %}
-            <a href="#">Show results (this will redirect to statistics page, where also avalable discussion)</a>
 
 {% endblock %}

@@ -1,10 +1,10 @@
+from django.db.models import Count
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
-from django.urls import reverse_lazy
-from django.utils import timezone
+
 from django.views.generic import ListView, DetailView, CreateView, UpdateView
-from .forms import ComparisonSurveyForm, RateObjectForm
-from .models import ComparisonSurvey, RateObject
+from .forms import ComparisonSurveyForm, RateObjectForm, ComplaintForm
+from .models import ComparisonSurvey, RateObject, ComparisonSurveyResult, Complaint
 
 
 # #### Comparison Survey views (CRUD) ####
@@ -43,7 +43,7 @@ class ComparisonSurveyDetail(DetailView):
 
 # FOR AUTHORIZED USERS ONLY
 
-def RetrieveCreatorComparisonSurveys(request, template='comparison_survey/dashboard.page.html'):
+def retrieve_creator_comparison_surveys(request, template='comparison_survey/dashboard.page.html'):
     """Returns all surveys created by exact user (user id retrieved from request.user) - dashboard.page.html"""
     try:
         creatorSurveys = ComparisonSurvey.objects.filter(author=request.user.id)
@@ -56,7 +56,7 @@ def RetrieveCreatorComparisonSurveys(request, template='comparison_survey/dashbo
     return render(request, template, context=context)
 
 
-def RetrieveComparisonSurveyOfCreatorById(request, pk, template='comparison_survey/csurvey.creator.single.html'):
+def retrieve_comparison_survey_of_creator_by_id(request, pk, template='comparison_survey/csurvey.creator.single.html'):
     """Returns exact comparison survey by id - csurvey.creator.single.html"""
     try:
         survey = ComparisonSurvey.objects.get(id=pk, author=request.user)
@@ -99,7 +99,7 @@ class EditCSurvey(UpdateView):
         return redirect(f'my-survey', self.object.id)
 
 
-def DeleteCSurvey(request, id, template='comparison_survey/survey.edit.page.html'):
+def delete_csurvey(request, id, template='comparison_survey/survey.edit.page.html'):
     """Used to delete comparison survey record - survey.edit.page.html, csurvey.single.page.html"""
     try:
         data = get_object_or_404(ComparisonSurvey, id=id)
@@ -114,7 +114,7 @@ def DeleteCSurvey(request, id, template='comparison_survey/survey.edit.page.html
 
 # #### Rate Objects' views (CRUD) ####
 
-def CreateRateObject(request, survey_id, template='comparison_survey/csurvey.creator.single.html'):
+def create_rate_object(request, survey_id, template='comparison_survey/csurvey.creator.single.html'):
     """Used to create Rate Object and redirect user after creation to the comparison survey page that it belongs"""
     # provide data consistency
     survey = get_object_or_404(ComparisonSurvey, pk=survey_id)
@@ -130,7 +130,7 @@ def CreateRateObject(request, survey_id, template='comparison_survey/csurvey.cre
     return render(request, template, {'create_ro_form': form})
 
 
-def DeleteRateObject(request, ro_pk, template='comparison_survey/csurvey.creator.single.html'):
+def delete_rate_object(request, ro_pk, template='comparison_survey/csurvey.creator.single.html'):
     """Used to delete rate object record - survey.edit.page.html, csurvey.single.page.html"""
     try:
         rate_obj = get_object_or_404(RateObject, pk=ro_pk)
@@ -148,12 +148,13 @@ def DeleteRateObject(request, ro_pk, template='comparison_survey/csurvey.creator
     return render(request, template, context={'create_ro_form': form})
 
 
-def RateCSurvey(request, cs_pk):
+def rate_csurvey(request, survey_id):
+    """view used for making rate operation"""
     if request.method == 'POST':
         if request.POST.get("mark"):
             print(type(request.POST.get("mark")))
 
-            csurvey = ComparisonSurvey.objects.get(pk=cs_pk)
+            csurvey = ComparisonSurvey.objects.get(pk=survey_id)
 
             if csurvey.rating == 0.0:
                 csurvey.rating = float(request.POST.get("mark"))
@@ -161,12 +162,75 @@ def RateCSurvey(request, cs_pk):
             else:
                 csurvey.rating = (csurvey.rating + float(request.POST.get("mark"))) / 2
                 csurvey.save()
-            return redirect('comparison-survey-by-id', pk=cs_pk)
+            return redirect('comparison-survey-by-id', pk=survey_id)
         else:
             return redirect('comparison-survey-home')
 
-# passSurvey
 
-# retrieve statistics for comparison survey
+def leave_complaint(request, survey_id, template='comparison_survey/csurvey.feedback.page.html'):
+    """view used for creating complaint to specific comparison survey"""
+    # provide data consistency
+    survey = get_object_or_404(ComparisonSurvey, pk=survey_id)
+    # save the number of top elements
 
-# retrieve rateObjects rating
+    form = ComplaintForm(request.POST or None)
+    if form.is_valid():
+        form.instance.survey = survey
+        form.instance.user = request.user
+        form.save()
+        return redirect('comparison-survey-by-id', survey.pk)
+    return render(request, template, {'create_ro_form': form})
+
+
+def statistics(request, survey_id, template='comparison_survey/csurvey.statistics.page.html'):
+    """view for statistics render of comparison survey"""
+    try:
+        survey = get_object_or_404(ComparisonSurvey, id=survey_id)
+
+        results_raw = ComparisonSurveyResult.objects.filter(survey__pk=survey_id) \
+            .select_related('respondent', 'rate_object') \
+            .annotate(total=Count('respondent')).order_by('total')
+        context = {
+            'survey': survey,
+            'results': results_raw,
+        }
+    except ComparisonSurveyResult.DoesNotExist:
+        raise Http404('No comparison survey results found')
+    return render(request, template, context=context)
+
+
+def feedback_actions(request, survey_id, template='comparison_survey/csurvey.feedback.page.html'):
+    try:
+        survey = get_object_or_404(ComparisonSurvey, id=survey_id)
+        context = {
+            'survey': survey,
+            'complaint_form': ComplaintForm,
+        }
+    except ComparisonSurveyResult.DoesNotExist:
+        raise Http404('No comparison survey found')
+    return render(request, template, context=context)
+
+
+class ComplaintAll(ListView):
+    """Returns all complaints list - csurvey.moderator.page.html"""
+    model = Complaint
+    template_name = 'comparison_survey/csurvey.moderator.page.html'
+    queryset = Complaint.objects \
+        .values('survey_id', 'survey__topic') \
+        .annotate(total=Count('reason')).order_by('total')
+    context_object_name = 'complaints'
+
+
+def complaints_for_csurvey(request, survey_id, template='comparison_survey/csurvey.complaint.page.html'):
+    """Returns complaints for specific comparison survey"""
+    try:
+        survey = ComparisonSurvey.objects.get(id=survey_id)
+        complaints = Complaint.objects.filter(survey=survey_id)
+        context = {
+            'survey': survey,
+            'complaints': complaints,
+        }
+    except ComparisonSurvey.DoesNotExist:
+        raise Http404('No comparison survey found')
+
+    return render(request, template, context=context)

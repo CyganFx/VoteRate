@@ -1,0 +1,41 @@
+{% extends "comparison_survey/csurvey.base.layout.html" %}
+
+<!-- THERE WOULD BE ADDED DISCUSSION PART, COMPLAINT SEND FUNCTIONALITY AND RATING FUNCTIONALITY
+ -->
+
+{% block title %} Feedback - {{ survey.topic }}{% endblock %}
+
+{% block contents %}
+<a href="{% url 'comparison-survey-by-id' survey.pk%}">Go back</a>
+    {% if user.is_authenticated %}
+        <div>
+        <h2>Rate <i>{{ survey.topic }}</i></h2>
+            <form action="{% url 'comparison-survey-rate' survey.id%}" method="post">
+               {% csrf_token %}
+                  {% for i in '1234567'|make_list %}
+                     <label>&#129321<input type="radio" name="mark" value="{{forloop.counter}}"></label>
+                  {%endfor%}
+                  <input type="submit" name="" value="&#9745;">
+            </form>
+        </div>
+
+        <h1>OR</h1>
+
+        <div>
+        <h2>Leave complaint</h2>
+            <span>please, describe in details your negative user experience</span>
+            <form action="{% url 'comparison-survey-new-complaint' survey.id%}" method="post">
+                {% csrf_token %}
+                {{ complaint_form.as_p }}
+                <button type="submit">Leave complaint</button>
+            </form>
+        </div>
+
+        {% else %}
+
+            <p>Please, <a href="{% url 'login' %}">Sign in</a> or
+            <a href="{% url 'register' %}">Sign Up</a> to leave a feedback</p>
+
+    {% endif %}
+
+{% endblock %}
