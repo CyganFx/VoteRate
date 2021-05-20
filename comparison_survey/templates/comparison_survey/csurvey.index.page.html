@@ -3,13 +3,31 @@
 {% block title %}Home{% endblock %}
 
 {% block contents %}
-                    {% if cSurveys %}
-                        <div>
-                            <h1>Surveys</h1>
-                        </div>
-                        <h3>Total: {{ total }}</h3>
+    {% if cSurveys %}
+        <div>
+             <h1>Surveys</h1>
+        </div>
+             <h3>Total: {{ total }}</h3>
+        <div>
+                {% if is_paginated %}
+                            <ul>
+                            {% if page_obj.has_previous %}
+                                <li><a href="?page={{ page_obj.previous_page_number }}">&laquo;</a></li>
+                            {% endif %}
+
+                            {% for i in paginator.page_range %}
+                                <li {% if page_obj.number == i %} class="active" {% endif %}>
+                                    <a href="?page={{i}}">{{ i }}</a>
+                                </li>
+                            {% endfor %}
+
+                            {% if page_obj.has_next %}
+                                <li><a href="?page={{ page_obj.next_page_number }}">&raquo;</a></li>
+                            {% endif %}
+                            </ul>
+                {% endif %}
+        </div>
                  {% for cs in cSurveys %}
-                                <hr>
                                 <h2>{{ cs.topic }}</h2>
                                 <p>created at: {{ cs.date_created|date:'d-m-Y' }} | rating <small>{{ cs.rating }}</small></p>
                                 <p>{{ cs.description|truncatechars:15 }}</p>
@@ -20,29 +38,11 @@
                                 <hr>
                 {% endfor %}
 
-                        {% if is_paginated %}
-                            <ul>
-                            {% if page_obj.has_previous %}
-                                <li><a href="?page={{ page_obj.previous_page_number }}">&laquo;</a></li>
-                            {% endif %}
-
-                        {% for i in paginator.page_range %}
-                                <li {% if page_obj.number == i %} class="active" {% endif %}>
-                                    <a href="?page={{i}}">{{ i }}</a>
-                                </li>
-                        {% endfor %}
-
-                        {% if page_obj.has_next %}
-                                <li><a href="?page={{ page_obj.next_page_number }}">&raquo;</a></li>
-                        {% endif %}
-                            </ul>
-                    {% endif %}
-
              {% else %}
                 <h6>No surveys added. Check later</h6>
                     {% if user.is_authenticated %}
                  <a href="{% url 'my-surveys-new' %}">Create your own comparison survey</a>
                     {% endif %}
-            {% endif %}
+    {% endif %}
 
 {% endblock %}

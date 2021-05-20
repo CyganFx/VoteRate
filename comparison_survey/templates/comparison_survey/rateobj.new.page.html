@@ -1,16 +1,19 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Create Rate Objects</title>
-</head>
-<body>
-<p>Create Rate object</p>
+{% extends "comparison_survey/csurvey.base.layout.html" %}
+
+<!--USER's CSURVEYS PAGE. LATER WOULD BE ADDED STATISTICS (number of views total, number of created csurveys)-->
+
+{% block title %}Rate Object{% endblock %}
+
+{% block contents %}
+
+    <h1>Create rate object</h1>
+
+    {% if user.is_authenticated %}
 
     <form method="POST">
     {% csrf_token %}
         {{ form.as_p }}
     <button type="submit" class="save btn btn-default">Save</button>
     </form>
-</body>
-</html>
+    {% endif %}
+{% endblock %}

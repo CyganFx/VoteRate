@@ -6,16 +6,14 @@
 
 {% block contents %}
         <div>
-
-            <hr>
-            <div>
-                rate action here
-            </div>
             <hr>
 
             <h1>{{ survey.topic }}</h1>
                 <span>Rating: {{ survey.rating }}</span>
             <p>Created at {{ survey.date_created|date:'d.m.Y' }}</p>
+
+            <a href="#">Pass (needs to be realized)</a>
+
             <hr>
 
                 <p>Description: <br>{{ survey.description }}</p>
@@ -24,7 +22,9 @@
         <h3>Rate Objects</h3>
 
         {% if rateObjects %}
+
             <a href="#">Pass Survey</a>
+
             {% for ro in rateObjects %}
                 <div>
                     <p>{{ ro.description }}</p>
@@ -38,8 +38,5 @@
             <p>No rating objects added. Please, check later</p>
         {% endif %}
             <a href="#">Show results (this will redirect to statistics page, where also avalable discussion)</a>
-        <div>
-            complaint form here
-        </div>
 
 {% endblock %}

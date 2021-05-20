@@ -11,20 +11,31 @@
             <div>
                     <h1>My Surveys</h1>
             </div>
+                 <h4>Total {{ total }}</h4>
+                 <table>
+                    <tr>
+                        <th>Topic</th>
+                        <th>Top number</th>
+                        <th>Actions</th>
+                    </tr>
                  {% for cs in mySurveys %}
-                    <div>
-                        <h3>
-                            <a href="{% url 'my-survey' cs.id %}">{{cs.topic}}</a>
-                        </h3>
-                        <a href="{% url 'my-surveys-change' cs.id %}">Edit</a>
-                        <form action="{% url 'my-surveys-delete' cs.id%}" method="post">
-                            {% csrf_token %}
-                            <button type="submit" class="save btn btn-default">Delete Survey</button>
-                        </form>
-                        <hr>
-                    </div>
+                     <tr>
+                        <td>
+                            <h3><a href="{% url 'my-survey' cs.pk %}">{{cs.topic}}</a></h3>
+                        </td>
+                        <td>
+                            <p>{{ cs.top_number }}</p>
+                        </td>
+                        <td>
+                            <a href="{% url 'my-surveys-change' cs.pk %}">&#x270E;</a>
+                            <form action="{% url 'my-surveys-delete' cs.id%}" method="post">
+                                {% csrf_token %}
+                                <button type="submit" class="save btn btn-default">&#x2612;</button>
+                            </form>
+                        </td>
+                     </tr>
                 {% endfor %}
-
+                </table>
              {% else %}
                 <h3>No results found</h3>
                  <a href="{% url 'my-surveys-new' %}">Create your own comparison survey</a>
