@@ -17,6 +17,8 @@ class Poll(models.Model):
     imageURL = models.CharField(default='', max_length=500)
     description = models.TextField()
     rating = models.FloatField(default=0)
+    rateCounter = models.IntegerField(default=0)
+    passedCounter = models.IntegerField(default=0)
     createdAt = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
@@ -34,6 +36,7 @@ class PollQuestion(models.Model):
 class PollAnswer(models.Model):
     poll_id = models.ForeignKey(Poll, on_delete=models.CASCADE)
     question_id = models.ForeignKey(PollQuestion, on_delete=models.CASCADE)
+    votedNum = models.IntegerField(default=0)
     content = models.TextField()
 
     def __str__(self):
@@ -48,3 +51,32 @@ class PollVote(models.Model):
 
     def __str__(self):
         return f'{self.user_id} {self.poll_id} {self.answer_id} {self.passedAt}'
+
+
+class UserPollRatings(models.Model):
+    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    poll_id = models.ForeignKey(Poll, on_delete=models.CASCADE)
+    rating = models.IntegerField()
+
+    def __str__(self):
+        return f'User: {self.user_id} Poll_ID: {self.poll_id} Rating: {self.rating}'
+
+
+class PollStats(models.Model):
+    poll_id = models.ForeignKey(Poll, on_delete=models.CASCADE)
+    womenNum = models.IntegerField(default=0)
+    womenPercentage = models.FloatField(default=0.0)
+    manNum = models.IntegerField(default=0)
+    manPercentage = models.FloatField(default=0.0)
+    higher_education_num = models.IntegerField(default=0)
+    higher_education_percentage = models.FloatField(default=0.0)
+    countryNumKZ = models.IntegerField(default=0)
+    countryKZPercentage = models.FloatField(default=0.0)
+    countryNumUSA = models.IntegerField(default=0)
+    countryUSAPercentage = models.FloatField(default=0.0)
+    averageAge = models.FloatField(default=0.0)
+    rateCounter = models.IntegerField(default=0)
+    passedCounter = models.IntegerField(default=0)
+
+    def __str__(self):
+        return f'Poll ID: {self.poll_id} Passed counter: {self.passedCounter}'

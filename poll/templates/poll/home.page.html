@@ -11,26 +11,42 @@
         <img src="{{ data.imageURL }}" alt="image" height="200px" width="200px"> <br>
         Description: {{ data.description }} <br>
         Rating: {{ data.rating }} <br>
+        Passed: {{ data.passedCounter }} people <br>
         Created at: {{ data.createdAt }} <br>
+        Category: {{ data.category_id.name }} <br>
         {% for poll_id in passedPolls %}
             {% if poll_id == data.id %}
-                <p>You have passed this poll already</p>
+                <p>Status: <span style="color: green">Passed</span></p>
+
+                {% for rate in ratedPolls %}
+                    {% if rate.poll_id == data.id %}
+                        <p>Your Rating: {{ rate.rating }} </p>
+                    {% endif %}
+                {% endfor %}
+
+                <form method="post" action="{% url 'poll-rate' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="poll_id" value="{{ data.id }}">
+                    <label>Rate poll: </label>
+                    <select name="rate">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                    </select>
+                    <input type="submit" value="Rate">
+                </form>
+                <p>Rated: {{ data.rateCounter }} people</p>
+
+                <p><a href="/poll/{{ data.id }}/comments">Comments</a></p>
+
             {% endif %}
         {% endfor %}
-        <a href="/poll/{{ data.id }}">Pass now</a>
-        <form method="post" action="{% url 'poll-rate' %}">
-            {% csrf_token %}
-            <input type="hidden" name="poll_id" value="{{ data.id }}">
-            <label>Rate poll: </label>
-            <select name="rate">
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-            </select>
-            <input type="submit" value="Rate">
-        </form>
+
+        <a href="/poll/{{ data.id }}">Pass now</a> <br>
+        <a href="/poll/{{ data.id }}/stats">View Statistics</a> <br>
+
     {% endfor %}
 
 {% endblock content %}

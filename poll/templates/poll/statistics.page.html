@@ -1,0 +1,33 @@
+{% extends "comparison_survey/base.layout.html" %}
+{% block title %} Statistics {% endblock title %}
+{% block content %}
+    <h1>Statistics</h1>
+
+    <ul class="list-group list-group-flush">
+        <li class="list-group-item">Passed: {{ pollStats.passedCounter }}</li>
+        <li class="list-group-item">Rated: {{ pollStats.rateCounter }}</li>
+        <li class="list-group-item">Women voted: {{ pollStats.womenNum }}</li>
+        <li class="list-group-item">Women overall percentage: {{ pollStats.womenPercentage }}%</li>
+        <li class="list-group-item">Men voted: {{ pollStats.manNum }}</li>
+        <li class="list-group-item">Men overall percentage: {{ pollStats.manPercentage }}%</li>
+        <li class="list-group-item">Percentage having higher education: {{ pollStats.higher_education_percentage }}%</li>
+        <li class="list-group-item">Votes from KZ: {{ pollStats.countryKZPercentage }}%</li>
+        <li class="list-group-item">Votes from USA: {{ pollStats.countryUSAPercentage }}%</li>
+        <li class="list-group-item">Average age: {{ pollStats.averageAge }} years</li>
+    </ul>
+
+    <h2>Title: {{ poll.title }}</h2>
+    <img src="{{ poll.imageURL }}" alt="image" height="200px" width="200px"> <br>
+    <h3>Description: {{ poll.description }} </h3>
+    <h3>Questions: </h3>
+    {% for pollQuestion in pollQuestions %}
+        <h4>Question: {{ pollQuestion.content }}</h4>
+        {% for pollAnswer in pollAnswers %}
+            {% if pollAnswer.question_id.id == pollQuestion.id %}
+                <input type="radio" name="answer_for_question{{ pollAnswer.question_id.id }}"
+                       value="{{ pollAnswer.id }}">{{ pollAnswer.content }} Voted: {{ pollAnswer.votedNum }} <br>
+            {% endif %}
+        {% endfor %}
+    {% endfor %}
+
+{% endblock content %}

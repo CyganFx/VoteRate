@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.shortcuts import render, get_object_or_404, redirect
 
 from .models import *
@@ -6,10 +8,10 @@ from .models import *
 def getAll(request, template='poll/home.page.html'):
     dataset = Poll.objects.order_by('-createdAt')
     votedPolls = PollVote.objects.all()
+    ratedPolls = UserPollRatings.objects.filter(user_id=int(request.user.id))
     userID = int(request.user.id)
 
     passedPolls = set()
-
     for vote in votedPolls:
         if vote.user_id.id == userID:
             passedPolls.add(vote.poll_id.id)
@@ -20,6 +22,7 @@ def getAll(request, template='poll/home.page.html'):
         'dataset': dataset,
         'userID': userID,
         'passedPolls': passedPolls,
+        'ratedPolls': ratedPolls,
         'numOfPollsPassed': numOfPollsPassed
     })
 
@@ -95,16 +98,15 @@ def createPoll(request, template='poll/create.page.html'):
     return redirect('poll-home')
 
 
-def votePoll(request, template='poll/poll.page.html'):
-    # if request.method != 'POST':
-    #     getByID(request, id, template)
+def votePoll(request):
+    if request.method != 'POST':
+        getAll(request)
     numOfQuestions = int(request.POST.get('numOfQuestions'))
     passedAt = timezone.now()
 
     poll_id = int(request.POST.get('poll_id'))
     questionStartingID = int(request.POST.get('questionStartingID1'))
     for i in range(numOfQuestions):
-        print(request.POST.get(f'answer_for_question{questionStartingID}'))
         pollVote = PollVote()
         pollVote.poll_id_id = poll_id
         pollVote.user_id_id = int(request.user.id)
@@ -113,20 +115,111 @@ def votePoll(request, template='poll/poll.page.html'):
         pollVote.save()
         questionStartingID += 1
 
+    poll = Poll.objects.get(pk=poll_id)
+    poll.passedCounter += 1
+    poll.save()
+
+    # stats:
+    user = User.objects.get(pk=int(request.user.id))
+
+    try:
+        pollStats = PollStats.objects.get(poll_id_id=poll_id)
+    except PollStats.DoesNotExist:
+        pollStats = PollStats(poll_id_id=poll_id)
+
+    pollStats.passedCounter += 1
+    pollStats.poll_id_id = poll_id
+    if user.profile.gender == 'man':
+        pollStats.manNum += 1
+        pollStats.manPercentage = (pollStats.manNum * 100) / pollStats.passedCounter
+        pollStats.womenPercentage = (pollStats.womenNum * 100) / pollStats.passedCounter
+    else:
+        pollStats.womenNum += 1
+        pollStats.womenPercentage = (pollStats.womenNum * 100) / pollStats.passedCounter
+        pollStats.manPercentage = (pollStats.manNum * 100) / pollStats.passedCounter
+
+    if user.profile.country == 'kz':
+        pollStats.countryNumKZ += 1
+        pollStats.countryKZPercentage = (pollStats.countryNumKZ * 100) / pollStats.passedCounter
+        pollStats.countryUSAPercentage = (pollStats.countryNumUSA * 100) / pollStats.passedCounter
+
+    if user.profile.country == 'usa':
+        pollStats.countryNumUSA += 1
+        pollStats.countryUSAPercentage = (pollStats.countryNumUSA * 100) / pollStats.passedCounter
+        pollStats.countryKZPercentage = (pollStats.countryNumKZ * 100) / pollStats.passedCounter
+
+    if user.profile.higher_education == 'yes':
+        pollStats.higher_education_num += 1
+        pollStats.higher_education_percentage = (pollStats.higher_education_num * 100) / pollStats.passedCounter
+    else:
+        pollStats.higher_education_percentage = (pollStats.higher_education_num * 100) / pollStats.passedCounter
+
+    current_date = datetime.now()
+    current_year = current_date.year
+    pollStats.averageAge = (pollStats.averageAge + (
+            current_year - user.profile.birth_date.year)) / pollStats.passedCounter
+    pollStats.save()
     return redirect('poll-home')
 
 
 def ratePoll(request):
-    print("I am here!")
-    print("I am here!")
-    print("I am here!")
-    print("I am here!")
-    print("I am here!")
     poll_id = int(request.POST.get('poll_id'))
     rate = int(request.POST.get('rate'))
     poll = get_object_or_404(Poll, pk=poll_id)
-    poll.rating = float(rate)
-    print(poll.rating)
+
+    try:
+        userRating = UserPollRatings.objects.get(user_id_id=int(request.user.id), poll_id_id=poll_id)
+        userRating.rating = rate
+    except UserPollRatings.DoesNotExist:
+        userRating = UserPollRatings(user_id_id=int(request.user.id), poll_id_id=poll_id, rating=rate)
+        userRating.save()
+        poll.rateCounter += 1
+
+    ratings = UserPollRatings.objects.filter(poll_id_id=poll_id).only('rating')
+    ratingsSum = 0.0
+    for r in ratings:
+        ratingsSum += float(r.rating)
+
+    poll.rating = float(ratingsSum / poll.rateCounter)
     poll.save()
 
+    pollStats = PollStats.objects.get(poll_id_id=poll_id)
+    pollStats.rateCounter += 1
+    pollStats.save()
+
     return redirect('poll-home')
+
+
+def pollStats(request, id, template='poll/statistics.page.html'):
+    poll = get_object_or_404(Poll, pk=id)
+    pollQuestions = PollQuestion.objects.filter(poll_id=id).order_by('id')
+    PollAnswers = []
+    numOfQuestions = 0
+    for pollQuestion in pollQuestions:
+        numOfQuestions += 1
+        PollAnswers.append(list(PollAnswer.objects.filter(poll_id=id, question_id=pollQuestion.id).order_by('id')))
+
+    res = []
+    answersCounterforSpecificQuestion = 0
+    for answer in PollAnswers:
+        for val in answer:
+            pollVotesTemp = PollVote.objects.filter(poll_id_id=id, answer_id_id=val.id)
+            for vote in pollVotesTemp:
+                answersCounterforSpecificQuestion += 1
+
+            val.votedNum = answersCounterforSpecificQuestion
+
+            res.append(val)
+            answersCounterforSpecificQuestion = 0
+
+    pollStats = PollStats.objects.get(poll_id_id=id)
+
+    context = {
+        'poll': poll,
+        'pollQuestions': pollQuestions,
+        'pollAnswers': res,
+        'numOfQuestions': numOfQuestions,
+        'pollStats': pollStats
+    }
+
+    return render(request, template, context)

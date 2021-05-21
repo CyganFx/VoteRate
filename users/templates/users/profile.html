@@ -9,7 +9,12 @@
                  src="{{ user.profile.image.url }}">
             <div class="media-body">
                 <h2 class="account-heading">{{ user.username }}</h2>
-                <p class="text-secondary">{{ user.email }}</p>
+                Email: <p class="text-secondary">{{ user.email }}</p>
+                Gender: <p class="text-secondary">{{ user.profile.gender }}</p>
+                Higher Education: <p class="text-secondary">{{ user.profile.higher_education }}</p>
+                Country: <p class="text-secondary">{{ user.profile.country }}</p>
+                City: <p class="text-secondary">{{ user.profile.city }}</p>
+                Birth Date: <p class="text-secondary">{{ user.profile.birth_date }}</p>
             </div>
         </div>
         <!-- FORM HERE -->
