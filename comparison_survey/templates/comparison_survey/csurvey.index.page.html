@@ -3,6 +3,17 @@
 {% block title %}Home{% endblock %}
 
 {% block contents %}
+    {% if category_list %}
+        <h2>Categories</h2>
+        {% for category in category_list %}
+            <a href='{% url 'comparison-survey-by-category' category.id %}'>{{ category.title }}</a>
+        {% endfor %}
+    {% endif %}
+
+    {% if category_item %}
+        <h3>Results by category: {{ category_item.title }}</h3>
+    {% endif %}
+
     {% if cSurveys %}
         <div>
              <h1>Surveys</h1>
@@ -29,6 +40,7 @@
         </div>
                  {% for cs in cSurveys %}
                                 <h2>{{ cs.topic }} - {{ cs.top_number }}</h2>
+                                <p>Category: {{ cs.category }}</p>
                                 <p>created at: {{ cs.date_created|date:'d-m-Y' }} | rating <small>{{ cs.rating }}</small></p>
                                 <p>{{ cs.description|truncatechars:15 }}</p>
                                         <div>

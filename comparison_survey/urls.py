@@ -5,6 +5,7 @@ urlpatterns = [
     # for any user
     path('', ComparisonSurveyAll.as_view(), name='comparison-survey-home'),
     path('<int:pk>', ComparisonSurveyDetail.as_view(), name='comparison-survey-by-id'),
+    path('category/<int:category_id>', CSurveysByCategory.as_view(), name='comparison-survey-by-category'),
     # TODO - implement search view for comparison survey
     # path('search/<int:num>'),
     # path('search/<str:topic>'),

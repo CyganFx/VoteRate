@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 
 from django.views.generic import ListView, DetailView, CreateView, UpdateView
 from .forms import ComparisonSurveyForm, RateObjectForm, ComplaintForm
-from .models import ComparisonSurvey, RateObject, ComparisonSurveyResult, Complaint
+from .models import ComparisonSurvey, RateObject, ComparisonSurveyResult, Complaint, Category
 
 
 # #### Comparison Survey views (CRUD) ####
@@ -22,6 +22,23 @@ class ComparisonSurveyAll(ListView):
     def get_context_data(self, *args, **kwargs):
         context = super(ComparisonSurveyAll, self).get_context_data(*args, **kwargs)
         context['total'] = ComparisonSurvey.objects.all().count()
+        context['category_list'] = Category.objects.all()
+        return context
+
+
+class CSurveysByCategory(ListView):
+    """Returns list of comparison surveys filtered by exact category"""
+    template_name = 'comparison_survey/csurvey.index.page.html'
+    context_object_name = 'cSurveys'
+
+    def get_queryset(self):
+        return ComparisonSurvey.objects.filter(category=self.kwargs['category_id'])
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context['total'] = self.get_queryset().count()
+        context['category_item'] = Category.objects.get(pk=self.kwargs['category_id'])
+        context['category_list'] = Category.objects.all()
         return context
 
 
@@ -47,9 +64,10 @@ def retrieve_creator_comparison_surveys(request, template='comparison_survey/das
     """Returns all surveys created by exact user (user id retrieved from request.user) - dashboard.page.html"""
     try:
         creatorSurveys = ComparisonSurvey.objects.filter(author=request.user.id)
+        categories = Category.objects.all()
         context = {
             'mySurveys': creatorSurveys,
-            'total': creatorSurveys.count()
+            'total': creatorSurveys.count(),
         }
     except ComparisonSurvey.DoesNotExist:
         raise Http404('No surveys found for this creator')

@@ -25,6 +25,8 @@
 
             {% endfor %}
             </table>
+        {% else %}
+            <h2>No incoming complaints</h2>
         {% endif %}
     {% else %}
             <p>Please, <a href="{% url 'login' %}">Sign in</a> or

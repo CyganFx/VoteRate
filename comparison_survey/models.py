@@ -3,6 +3,14 @@ from django.db import models
 from django.utils import timezone
 
 
+class Category(models.Model):
+    """model defines one of the properties of Comparison Survey"""
+    title = models.CharField(max_length=50, default='entertainment')
+
+    def __str__(self):
+        return self.title
+
+
 class ComparisonSurvey(models.Model):
     """
     top_number is formed due to the number of rate-objects that belongs to survey
@@ -15,6 +23,7 @@ class ComparisonSurvey(models.Model):
     rating = models.FloatField(default=0.0)
     date_created = models.DateTimeField(default=timezone.now)
     views = models.IntegerField(default=0)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.topic
