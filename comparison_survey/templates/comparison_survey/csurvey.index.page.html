@@ -3,6 +3,14 @@
 {% block title %}Home{% endblock %}
 
 {% block contents %}
+
+     <!--MESSAGES WOULD BE OUTPUTTED HERE. THERE CAN BE USED BOOTSTRAP TOASTS-->
+        {% if messages %}
+                {% for message in messages %}
+                    <p {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</p>
+                {% endfor %}
+        {% endif %}
+
     {% if category_list %}
         <h2>Categories</h2>
         {% for category in category_list %}
@@ -51,7 +59,7 @@
                 {% endfor %}
 
              {% else %}
-                <h6>No surveys added. Check later</h6>
+                <h4>No surveys added. Check later</h4>
                     {% if user.is_authenticated %}
                  <a href="{% url 'my-surveys-new' %}">Create your own comparison survey</a>
                     {% endif %}

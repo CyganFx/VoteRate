@@ -5,6 +5,12 @@
 {% block title %}{{ survey.topic }}{% endblock %}
 
 {% block contents %}
+     <!--MESSAGES WOULD BE OUTPUTTED HERE. THERE CAN BE USED BOOTSTRAP TOASTS-->
+        {% if messages %}
+                {% for message in messages %}
+                    <p {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</p>
+                {% endfor %}
+        {% endif %}
         <div>
             <hr>
 

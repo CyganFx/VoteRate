@@ -8,6 +8,14 @@
 
     {% if user.is_authenticated %}
          <div>
+
+         <!--MESSAGES WOULD BE OUTPUTTED HERE. THERE CAN BE USED BOOTSTRAP TOASTS-->
+        {% if messages %}
+                {% for message in messages %}
+                    <p {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</p>
+                {% endfor %}
+        {% endif %}
+
             <hr>
                 <h1>{{ survey.topic }}</h1>
                     <span>Rating: {{ survey.rating }}</span> |

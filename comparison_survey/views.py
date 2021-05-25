@@ -1,7 +1,7 @@
 from django.db.models import Count
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
-
+from django.contrib import messages
 from django.views.generic import ListView, DetailView, CreateView, UpdateView
 from .forms import ComparisonSurveyForm, RateObjectForm, ComplaintForm
 from .models import ComparisonSurvey, RateObject, ComparisonSurveyResult, Complaint, Category
@@ -102,6 +102,7 @@ class CreateCSurvey(CreateView):
         self.object = form.save(commit=False)
         self.object.author = self.request.user
         self.object.save()
+        messages.success(self.request, "New Comparison survey created")  # this would be displayed on dashboard
         return HttpResponseRedirect(self.get_success_url())
 
 
@@ -114,6 +115,8 @@ class EditCSurvey(UpdateView):
     def form_valid(self, form):
         self.object = form.save(commit=False)
         self.object.save()
+        messages.success(self.request,
+                         f"Comparison survey - {self.object.topic} successfully updated")  # this would be displayed on creator.single cs page
         return redirect(f'my-survey', self.object.id)
 
 
@@ -126,6 +129,8 @@ def delete_csurvey(request, id, template='comparison_survey/survey.edit.page.htm
 
     if request.method == 'POST':
         data.delete()
+        messages.success(request,
+                         f"Comparison survey - {data.topic} successfully deleted")  # this would be displayed on dashboard
         return redirect('my-surveys-all')
     return render(request, template)
 
@@ -162,6 +167,8 @@ def delete_rate_object(request, ro_pk, template='comparison_survey/csurvey.creat
         survey.top_number -= 1
         survey.save()
         rate_obj.delete()
+        messages.success(request,
+                         f"Rate object - {rate_obj.description} successfully deleted")  # this would be displayed on dashboard
         return redirect('my-survey', survey.pk)
     return render(request, template, context={'create_ro_form': form})
 
@@ -180,8 +187,12 @@ def rate_csurvey(request, survey_id):
             else:
                 csurvey.rating = (csurvey.rating + float(request.POST.get("mark"))) / 2
                 csurvey.save()
+            messages.success(request,
+                             f"{csurvey.topic}: Thank you for your response")  # this message will be displayed on cs single page
             return redirect('comparison-survey-by-id', pk=survey_id)
         else:
+            messages.error(request,
+                           "Oops. Some errors were occured during rating")  # this message will be displayed on index page
             return redirect('comparison-survey-home')
 
 
@@ -196,6 +207,8 @@ def leave_complaint(request, survey_id, template='comparison_survey/csurvey.feed
         form.instance.survey = survey
         form.instance.user = request.user
         form.save()
+        messages.success(request,
+                         f"{survey.topic}: We will definitely consider your complaint")  # this message will be displayed on cs single page
         return redirect('comparison-survey-by-id', survey.pk)
     return render(request, template, {'create_ro_form': form})
 
