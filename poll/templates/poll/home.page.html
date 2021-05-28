@@ -7,7 +7,7 @@
     <h1>List of polls:</h1>
 
     {% for data in dataset %}
-        Title: {{ data.title }} <br>
+        <h1>Title: {{ data.title }}</h1>
         <img src="{{ data.imageURL }}" alt="image" height="200px" width="200px"> <br>
         Description: {{ data.description }} <br>
         Rating: {{ data.rating }} <br>
@@ -38,9 +38,13 @@
                     <input type="submit" value="Rate">
                 </form>
                 <p>Rated: {{ data.rateCounter }} people</p>
+                <button id="report" onclick="showReportForm({{ data.id }})">Report</button> <br>
+                <form action="{% url 'poll-report' %}" method="POST" id="report-section/{{ data.id }}">
+                    {% csrf_token %}
+                    <input type="hidden" value="{{ data.id }}" name="poll_id">
+                </form>
 
-                <p><a href="/poll/{{ data.id }}/comments">Comments</a></p>
-
+                <p><a href="/poll/{{ data.id }}/comments">Leave a comment</a></p>
             {% endif %}
         {% endfor %}
 

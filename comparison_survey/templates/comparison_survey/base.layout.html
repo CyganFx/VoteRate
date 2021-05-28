@@ -25,15 +25,26 @@
                     <a class="nav-link active" aria-current="page" href="#">surveys</a>
                 </li>
                 <li class="nav-item">
-                    {% if user.is_authenticated %}
-                        <a class="nav-link" href="{% url 'poll-create' %}">Create Poll</a>
-                        <a class="nav-link" href="{% url 'profile' %}">Profile</a>
-                        <a class="nav-link" href="{% url 'logout' %}">Logout</a>
-                    {% else %}
-                        <a class="nav-link" href="{% url 'login' %}">Login/register</a>
-                    {% endif %}
                     <a class="nav-link" href="{% url 'poll-home' %}">Polls</a>
                 </li>
+                {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'profile' %}">Profile</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'poll-create' %}">Create Poll</a>
+                    </li>
+                    {% if user.username == 'admin' %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'poll-reportsPage' %}">Reports Page</a>
+                        </li>
+                    {% endif %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                    </li>
+                {% else %}
+                    <a class="nav-link" href="{% url 'login' %}">Login/register</a>
+                {% endif %}
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
                        data-bs-toggle="dropdown" aria-expanded="false">
@@ -106,7 +117,7 @@
             <div class="answers" id="answers_question${questionsCounter}">
 
             </div>
-  `;
+  `
         questions.appendChild(div);
     }
 
@@ -154,6 +165,26 @@
         let localAnswersCounterElem = document.getElementById(`question${localQuestionsCounter}_answersCounter`)
         localAnswersCounterElem.value = parseInt(localAnswersCounterElem.value) - 1
     }
+
+    function showReportForm(data_id) {
+        console.log(data_id)
+        console.log(data_id)
+        let form = document.getElementById(`report-section/${data_id}`)
+        let div = document.createElement('div');
+        div.id = `report-field`
+
+        div.innerHTML = `
+        <select name="report-type">
+            <option value="Insulting the feelings">Insulting the feelings</option>
+            <option value="Sexual content">Sexual content</option>
+            <option value="Exposing personal information">Exposing personal information</option>
+        </select> <br>
+         <input type="textarea" name="report-text" placeholder="Describe why you report this poll" value="" /> <br>
+         <input type="submit" value="Send Report"> <br>
+         `
+        form.appendChild(div);
+    }
+
 </script>
 
 </body>

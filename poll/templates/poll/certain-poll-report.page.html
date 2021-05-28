@@ -1,0 +1,15 @@
+{% extends "comparison_survey/base.layout.html" %}
+{% block title %} Reports {% endblock title %}
+{% block content %}
+
+    <h1>Title: {{ concrete_poll.title }}</h1>
+
+    {% for poll in polls %}
+
+        <h2>Reported by {{ poll.user_id.username }} #{{ poll.user_id.id }}</h2>
+        <p>Type: {{ poll.report_type }}</p>
+        <p>Description: {{ poll.report_text }}</p>
+        <p>Date: {{ poll.at }}</p>
+        <hr>
+    {% endfor %}
+{% endblock %}

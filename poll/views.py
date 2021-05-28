@@ -8,9 +8,9 @@ from .models import *
 def getAll(request, template='poll/home.page.html'):
     dataset = Poll.objects.order_by('-createdAt')
     votedPolls = PollVote.objects.all()
-    ratedPolls = UserPollRatings.objects.filter(user_id=int(request.user.id))
     userID = int(request.user.id)
-
+    ratedPolls = UserPollRatings.objects.filter(user_id=userID)
+    poll_reports = PollReports.objects.filter(user_id_id=userID)
     passedPolls = set()
     for vote in votedPolls:
         if vote.user_id.id == userID:
@@ -23,7 +23,8 @@ def getAll(request, template='poll/home.page.html'):
         'userID': userID,
         'passedPolls': passedPolls,
         'ratedPolls': ratedPolls,
-        'numOfPollsPassed': numOfPollsPassed
+        'numOfPollsPassed': numOfPollsPassed,
+        'pollReports': poll_reports
     })
 
 
@@ -223,3 +224,58 @@ def pollStats(request, id, template='poll/statistics.page.html'):
     }
 
     return render(request, template, context)
+
+
+def pollReport(request):
+    poll_id = int(request.POST.get('poll_id'))
+    report_type = request.POST.get('report-type')
+    report_text = request.POST.get('report-text')
+    user_id = int(request.user.id)
+    poll = get_object_or_404(Poll, pk=poll_id)
+    poll_reports = PollReports(poll_id_id=poll_id, user_id_id=user_id, report_type=report_type, report_text=report_text)
+    poll_reports.save()
+    poll.reportCounter += 1
+    poll.save()
+
+    return redirect('poll-home')
+
+
+def PollReportsPage(request, template='poll/reports.page.html'):
+    polls = PollReports.objects.values('poll_id').distinct().order_by('poll_id')
+
+    listOfPolls = []
+
+    for poll in polls:
+        p = get_object_or_404(Poll, pk=poll['poll_id'])
+        listOfPolls.append(p)
+
+    context = {
+        "polls": listOfPolls
+    }
+
+    return render(request, template, context)
+
+
+def PollSpecificPollReports(request, id, template='poll/certain-poll-report.page.html'):
+    polls = PollReports.objects.filter(poll_id_id=id)
+
+    for poll in polls:
+        print(poll.user_id.id)
+
+    for poll in polls:
+        concrete_poll = poll.poll_id.title
+        break
+
+    context = {
+        "polls": polls,
+        "concrete_poll": concrete_poll
+    }
+
+    return render(request, template, context)
+
+
+def PollDelete(request, id):
+    poll = get_object_or_404(Poll, pk=id)
+    poll.delete()
+
+    return redirect('poll-reportsPage')

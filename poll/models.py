@@ -19,6 +19,7 @@ class Poll(models.Model):
     rating = models.FloatField(default=0)
     rateCounter = models.IntegerField(default=0)
     passedCounter = models.IntegerField(default=0)
+    reportCounter = models.IntegerField(default=0)
     createdAt = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
@@ -80,3 +81,14 @@ class PollStats(models.Model):
 
     def __str__(self):
         return f'Poll ID: {self.poll_id} Passed counter: {self.passedCounter}'
+
+
+class PollReports(models.Model):
+    poll_id = models.ForeignKey(Poll, on_delete=models.CASCADE)
+    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    report_type = models.TextField(max_length=50)
+    report_text = models.TextField(max_length=200)
+    at = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return f'Poll ID: {self.poll_id}, report type: {self.report_type}'
