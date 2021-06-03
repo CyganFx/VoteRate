@@ -6,7 +6,12 @@ from .models import *
 
 
 def getAll(request, template='poll/home.page.html'):
-    dataset = Poll.objects.order_by('-createdAt')
+    if 'search' in request.GET:
+        search = request.GET['search']
+        dataset = Poll.objects.filter(title__icontains=search)
+    else:
+        dataset = Poll.objects.order_by('-createdAt')
+
     votedPolls = PollVote.objects.all()
     userID = int(request.user.id)
     ratedPolls = UserPollRatings.objects.filter(user_id=userID)

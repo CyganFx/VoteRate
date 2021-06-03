@@ -1,7 +1,23 @@
 {% extends "comparison_survey/base.layout.html" %}
 {% block title %} Poll {% endblock title %}
 {% block content %}
-
+    <!-- Search Start -->
+    <div class="jumbotron border shadow">
+        <div class="row">
+            <div class="col-md-8 offset-2">
+                <form method="GET" action="{% url 'poll-home' %}">
+                    <div class="input-group">
+                        <input name="search" type="text" placeholder="Search" class="form-control form-control-lg"/>
+                        <div class="input-group-append">
+                            <button class="btn btn-dark btn-lg" type="submit">Search</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- End Search -->
+    <br>
     <h2>Number of polls already passed: {{ numOfPollsPassed }}</h2>
 
     <h1>List of polls:</h1>
