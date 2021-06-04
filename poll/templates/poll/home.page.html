@@ -25,11 +25,13 @@
     {% for data in dataset %}
         <h1>Title: {{ data.title }}</h1>
         <img src="{{ data.imageURL }}" alt="image" height="200px" width="200px"> <br>
-        Description: {{ data.description }} <br>
-        Rating: {{ data.rating }} <br>
-        Passed: {{ data.passedCounter }} people <br>
-        Created at: {{ data.createdAt }} <br>
-        Category: {{ data.category_id.name }} <br>
+        <ul class="list-group">
+            <li class="list-group-item">Description: {{ data.description }}</li>
+            <li class="list-group-item">Rating: {{ data.rating }}</li>
+            <li class="list-group-item">Passed: {{ data.passedCounter }} people</li>
+            <li class="list-group-item">Created at: {{ data.createdAt }}</li>
+            <li class="list-group-item">Category: {{ data.category_id.name }}</li>
+        </ul>
         {% for poll_id in passedPolls %}
             {% if poll_id == data.id %}
                 <p>Status: <span style="color: green">Passed</span></p>
@@ -51,10 +53,10 @@
                         <option value="4">4</option>
                         <option value="5">5</option>
                     </select>
-                    <input type="submit" value="Rate">
+                    <button type="submit" class="btn btn-info"> Rate</button>
                 </form>
                 <p>Rated: {{ data.rateCounter }} people</p>
-                <button id="report" onclick="showReportForm({{ data.id }})">Report</button> <br>
+                <button id="report" onclick="showReportForm({{ data.id }})" class="btn btn-danger">Report</button> <br>
                 <form action="{% url 'poll-report' %}" method="POST" id="report-section/{{ data.id }}">
                     {% csrf_token %}
                     <input type="hidden" value="{{ data.id }}" name="poll_id">

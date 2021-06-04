@@ -11,6 +11,7 @@ urlpatterns = [
     path('report/', views.pollReport, name='poll-report'),
     path('reportsPage/', views.PollReportsPage, name='poll-reportsPage'),
     path('<int:id>/reports/', views.PollSpecificPollReports, name='poll-reports-specificPage'),
-    path('<int:id>/delete/', views.PollDelete, name='poll-delete')
-    # path('<int:id>/comments', views.pollComments, name='poll-comments')
+    path('<int:id>/delete/', views.PollDelete, name='poll-delete'),
+    path('<int:id>/comments/', views.PollComments, name='poll-comments'),
+    path('comments/', views.PollCommentsPost, name='poll-comments-post')
 ]

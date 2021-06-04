@@ -10,4 +10,5 @@ admin.site.register(Category)
 admin.site.register(UserPollRatings)
 admin.site.register(PollStats)
 admin.site.register(PollReports)
+admin.site.register(Comment)
 

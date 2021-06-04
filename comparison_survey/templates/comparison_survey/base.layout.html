@@ -104,17 +104,16 @@
         document.getElementById("total_questions_counter").value = questionsCounter
         let questions = document.getElementById("questions")
         let div = document.createElement('div');
-        div.className = 'question';
+        div.className = 'form-group';
         div.id = `question${questionsCounter}`
         div.innerHTML = `
-            <br>
            <label>Question ${questionsCounter}: </label>
-            <input type="text" name="question${questionsCounter}" value="" />
+            <input type="text" name="question${questionsCounter}" value="" class="form-control"/>
             <input type="hidden" name="question${questionsCounter}_answersCounter" id="question${questionsCounter}_answersCounter" value="0">
-            <input type="button" value="Add Answer Option" onclick="addAnswer(${div.id}, ${questionsCounter})" />
-            <input type="button" value="Remove Question" onclick="removeQuestion(this, ${questionsCounter})" />
+            <button type="button" onclick="addAnswer(${div.id}, ${questionsCounter})" class="btn btn-primary">Add Answer Option</button>
+            <button type="button" onclick="removeQuestion(this, ${questionsCounter})" class="btn btn-danger"> Remove Question</button>
 
-            <div class="answers" id="answers_question${questionsCounter}">
+            <div class="answers form-control" id="answers_question${questionsCounter}">
 
             </div>
   `
@@ -130,15 +129,14 @@
 
         let answers = document.getElementById(`answers_question${questionsCounter}`)
         let div = document.createElement('div');
-        div.className = 'answer';
+        div.className = 'answers form-control';
         div.id = `answer${answersCounter}`
 
         div.innerHTML = `
-        <br>
         <label>Answer Option ${localAnswersCounter} for question ${questionsCounter}: </label>
-         <input type="text" name="answer${localAnswersCounter}_question${questionsCounter}" id="answer${localAnswersCounter}_question${questionsCounter}" value="" />
-         <input type="button" onclick="removeAnswer(${answersCounter}, ${questionsCounter})" value="Delete answer"/>
-         <br>`
+         <input type="text" name="answer${localAnswersCounter}_question${questionsCounter}" id="answer${localAnswersCounter}_question${questionsCounter}" value="" class="form-control"/>
+         <button type="button" onclick="removeAnswer(${answersCounter}, ${questionsCounter})" class="btn btn-danger"> Delete answer</button>
+         `
         answers.appendChild(div);
     }
 

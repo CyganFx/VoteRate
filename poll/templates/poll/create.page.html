@@ -7,22 +7,28 @@
     <form method="POST" action="{% url 'poll-create' %}">
         {% csrf_token %}
         <input type="hidden" name="host_id" value="">
-        <label>Category: </label>
-        <select name="category_id">
-            {% for category in categories %}
-                <option value="{{ category.id }}">{{ category.name }}</option>
-            {% endfor %}
-        </select>
-        <br>
-        <label>Title: </label>
-        <input type="text" name="title" value="">
-        <br>
-        <label>Image URL: </label>
-        <input type="text" name="imageURL" value="">
-        <br>
-        <label>Description: </label>
-        <textarea name="description" cols="30" rows="10"></textarea>
-        <br>
+        <div class="form-group">
+            <label>Category: </label>
+            <select name="category_id" class="form-control">
+                {% for category in categories %}
+                    <option value="{{ category.id }}">{{ category.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Title: </label>
+            <input type="text" name="title" value="" class="form-control">
+        </div>
+        <div class="form-group">
+            <label>Image URL: </label>
+            <input type="text" name="imageURL" value="" class="form-control">
+        </div>
+
+        <div class="form-group">
+            <label>Description: </label>
+            <textarea name="description" cols="30" rows="10" class="form-control"></textarea>
+        </div>
+
         <div class="questions_answers" id="questions_answers">
             <div class="questions" id="questions"></div>
             <input type="hidden" name="total_questions_counter" id="total_questions_counter" value="">
@@ -31,9 +37,9 @@
 
         <br><br>
 
-        <input type="submit" value="Create Poll">
+        <button type="submit" class="btn btn-primary">Create Poll</button>
 
     </form>
     <br>
-    <button onclick="addQuestion()">Add question</button>
+    <button onclick="addQuestion()" class="btn btn-info">Add question</button>
 {% endblock content %}

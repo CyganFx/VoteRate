@@ -1,0 +1,63 @@
+{% extends "comparison_survey/base.layout.html" %}
+{% block title %} Poll {% endblock title %}
+{% block content %}
+
+    <h1>Poll Page</h1>
+    <form>
+        {% csrf_token %}
+        <h2>Title: {{ poll.title }}</h2>
+        <img src="{{ poll.imageURL }}" alt="image" height="200px" width="200px"> <br>
+        <h3>Description: {{ poll.description }} </h3>
+    </form>
+
+    <br><br>
+
+    <h1>Comments:</h1>
+
+    <main class="main-content">
+        <!--comments-->
+        <div class="section ">
+            <div class="container ">
+                {#                <h2>Comments({{ post_comments_count }})</h2>#}
+                <div class="row ">
+                    <div class="col-lg-8 mx-auto ">
+                        <!--display coment-->
+
+                        <div class="media-list">
+                            {% for comment in post_comments %}
+                                <div>
+                                    <img class="avatar avatar-sm mr-4"
+                                         style="max-height: 100px; max-width: 100px;"
+                                         src="{{ user.profile.image.url }}">
+
+                                    <div class="media-body">
+                                        <div class="small-1">
+                                            <b> {{ comment.user }}</b>
+                                            <time class="ml-4 opaciy-70 small-3"> {{ comment.date }}</time>
+                                        </div>
+                                        <p> {{ comment.content }}</p>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+
+
+                        <!--display the form-->
+                        <form method="POST" action="{% url 'poll-comments-post' %}">
+                            {% csrf_token %}
+                            <input type="hidden">
+                            <div class="form-group">
+                                <input type="hidden" name="poll_id" value="{{ poll.id }}">
+                                <textarea class="md-textarea form-control" placeholder="comment here ..." rows="4"
+                                          name="content"></textarea>
+                            </div>
+                            <button class="btn btn-primary btn-block " type="submit">Comment</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+{% endblock content %}

@@ -2,6 +2,7 @@ from datetime import datetime
 
 from django.shortcuts import render, get_object_or_404, redirect
 
+from .forms import CommentForm
 from .models import *
 
 
@@ -284,3 +285,66 @@ def PollDelete(request, id):
     poll.delete()
 
     return redirect('poll-reportsPage')
+
+
+def PollComments(request, id, template='poll/comments.page.html'):
+    poll = get_object_or_404(Poll, pk=id)
+    pollQuestions = PollQuestion.objects.filter(poll_id=id).order_by('id')
+    PollAnswers = []
+    numOfQuestions = 0
+    for pollQuestion in pollQuestions:
+        numOfQuestions += 1
+        PollAnswers.append(list(PollAnswer.objects.filter(poll_id=id, question_id=pollQuestion.id).order_by('id')))
+
+    res = []
+
+    for answer in PollAnswers:
+        for val in answer:
+            res.append(val)
+
+    comments = Comment.objects.filter(poll_id=id)
+
+    context = {
+        'poll': poll,
+        'pollQuestions': pollQuestions,
+        'pollAnswers': res,
+        'numOfQuestions': numOfQuestions,
+        'post_comments': comments,
+    }
+
+    return render(request, template, context)
+
+
+def PollCommentsPost(request, template='poll/comments.page.html'):
+    if request.method == 'POST':
+        content = request.POST.get('content')
+        userID = int(request.user.id)
+        pollID = int(request.POST.get('poll_id'))
+        comment = Comment(user_id=userID, poll_id=pollID, content=content)
+        comment.save()
+
+        poll = get_object_or_404(Poll, pk=pollID)
+        pollQuestions = PollQuestion.objects.filter(poll_id=pollID).order_by('id')
+        PollAnswers = []
+        numOfQuestions = 0
+        for pollQuestion in pollQuestions:
+            numOfQuestions += 1
+            PollAnswers.append(list(PollAnswer.objects.filter(poll_id=pollID, question_id=pollQuestion.id).order_by('id')))
+
+        res = []
+
+        for answer in PollAnswers:
+            for val in answer:
+                res.append(val)
+
+        comments = Comment.objects.filter(poll_id=pollID)
+
+        context = {
+            'poll': poll,
+            'pollQuestions': pollQuestions,
+            'pollAnswers': res,
+            'numOfQuestions': numOfQuestions,
+            'post_comments': comments
+        }
+
+        return render(request, template, context)
