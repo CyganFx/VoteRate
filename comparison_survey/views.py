@@ -63,8 +63,7 @@ class ComparisonSurveyDetail(DetailView):
 def retrieve_creator_comparison_surveys(request, template='comparison_survey/dashboard.page.html'):
     """Returns all surveys created by exact user (user id retrieved from request.user) - dashboard.page.html"""
     try:
-        creatorSurveys = ComparisonSurvey.objects.filter(author=request.user.id)
-        categories = Category.objects.all()
+        creatorSurveys = ComparisonSurvey.objects.filter(author=request.user.id).order_by('category__title')
         context = {
             'mySurveys': creatorSurveys,
             'total': creatorSurveys.count(),

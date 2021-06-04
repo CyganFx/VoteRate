@@ -24,6 +24,7 @@
                  <table>
                     <tr>
                         <th>Topic</th>
+                        <th>Category</th>
                         <th>Top number</th>
                         <th>Actions</th>
                     </tr>
@@ -31,6 +32,9 @@
                      <tr>
                         <td>
                             <h3><a href="{% url 'my-survey' cs.pk %}">{{cs.topic}}</a></h3>
+                        </td>
+                        <td>
+                            <p>{{ cs.category }}</p>
                         </td>
                         <td>
                             <p>{{ cs.top_number }}</p>

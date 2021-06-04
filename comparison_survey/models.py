@@ -31,12 +31,19 @@ class ComparisonSurvey(models.Model):
 
 class RateObject(models.Model):
     """model used to define objects of vote/rate action"""
-    description = models.TextField(max_length=50, help_text='rate object name here...')
+    description = models.CharField(max_length=50, help_text='rate object name here...')
     media = models.CharField(max_length=150, help_text='url of image here...')
     survey = models.ForeignKey(ComparisonSurvey, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.description
+
+
+"""
+initial_list_of_ro -> send to user
+
+list_of_chosen -> send to db
+"""
 
 
 class ComparisonSurveyResult(models.Model):

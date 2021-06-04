@@ -13,6 +13,7 @@
 
     {% if category_list %}
         <h2>Categories</h2>
+            <a href='{% url 'comparison-survey-home' %}'>All</a>
         {% for category in category_list %}
             <a href='{% url 'comparison-survey-by-category' category.id %}'>{{ category.title }}</a>
         {% endfor %}
