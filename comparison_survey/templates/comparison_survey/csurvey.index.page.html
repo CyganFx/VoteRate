@@ -60,7 +60,9 @@
                 {% endfor %}
 
              {% else %}
+
                 <h4>No surveys added. Check later</h4>
+
                     {% if user.is_authenticated %}
                  <a href="{% url 'my-surveys-new' %}">Create your own comparison survey</a>
                     {% endif %}

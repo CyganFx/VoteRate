@@ -10,7 +10,6 @@ class Category(models.Model):
     def __str__(self):
         return self.title
 
-
 class ComparisonSurvey(models.Model):
     """
     top_number is formed due to the number of rate-objects that belongs to survey
@@ -31,7 +30,7 @@ class ComparisonSurvey(models.Model):
 
 class RateObject(models.Model):
     """model used to define objects of vote/rate action"""
-    description = models.CharField(max_length=50, help_text='rate object name here...')
+    description = models.TextField(max_length=50, help_text='rate object name here...')
     media = models.CharField(max_length=150, help_text='url of image here...')
     survey = models.ForeignKey(ComparisonSurvey, on_delete=models.CASCADE)
 

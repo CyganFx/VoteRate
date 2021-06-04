@@ -5,6 +5,7 @@ urlpatterns = [
     # for any user
     path('', ComparisonSurveyAll.as_view(), name='comparison-survey-home'),
     path('<int:pk>', ComparisonSurveyDetail.as_view(), name='comparison-survey-by-id'),
+
     path('category/<int:category_id>', CSurveysByCategory.as_view(), name='comparison-survey-by-category'),
 
     # path('search/<str:topic>'),
@@ -24,5 +25,4 @@ urlpatterns = [
     path('complaint/<int:survey_id>', leave_complaint, name='comparison-survey-new-complaint'),
     path('complaint', ComplaintAll.as_view(), name='complaints-list'),
     path('complaints/for/<int:survey_id>', complaints_for_csurvey, name='comparison-survey-complaints')
-
 ]
