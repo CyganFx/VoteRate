@@ -1,31 +1,41 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "comparison_survey/csurvey.base.layout.html" %}
 
-<div>
-    Statistics about rate objects here
-</div>
+<!-- THERE WOULD BE RENDERED STATISTICS ABOUT USERS' C. Survey PASS (RATING OF RATE OBJECTS).
+ -->
 
-{% if user.is_authenticated %}
-                    <h4>Rate this survey</h4>
-                        <form action="{% url 'comparison-survey-rate' survey.pk%}" method="post">
-                            {% csrf_token %}
-                            {% for i in '1234567'|make_list %}
-                                <label>&#129321<input type="radio" name="mark" value="{{forloop.counter}}"></label>
-                            {%endfor%}
-                            <input type="submit" name="" value="&#9745;">
-                        </form>
-                    {% else %}
-                    To rate this Comparison Survey, please, Sign up or Sign in.
-{% endif %}
+{% block title %} Statistics - {{ survey.topic }}{% endblock %}
 
-        <div>
-            complaint form here
-        </div>
+{% block contents %}
+    <a href="{% url 'comparison-survey-by-id' survey.pk%}">Go back</a>
+    {% if results %}
+        <h2>Results of {{ survey.topic }}</h2>
+        <h3>Top {{ survey.top_number }}</h3>
+        <table>
+            <tr>
+                <th>Rating</th>
+                <th>Rate Object Name</th>
+                <th>Score</th>
+            </tr>
+            {% for res in results %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ res.rate_object.description }}</td>
+                    <td>{{ res.total }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <h4>No statistical data foung for Comparison Survey - {{ survey.topic }}</h4>
+    {% endif %}
 
-</body>
-</html>
+    {% if user.is_authenticated %}
+
+        send comment form here
+
+    {% else %}
+
+        <p>Please, <a href="{% url 'login' %}">Sign in</a> or
+            <a href="{% url 'register' %}">Sign Up</a> to leave a comment</p>
+
+    {% endif %}
+{% endblock %}

@@ -7,10 +7,18 @@
 {% block contents %}
 
     {% if user.is_authenticated %}
-            <div>
+         <div>
+
+         <!--MESSAGES WOULD BE OUTPUTTED HERE. THERE CAN BE USED BOOTSTRAP TOASTS-->
+        {% if messages %}
+                {% for message in messages %}
+                    <p {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</p>
+                {% endfor %}
+        {% endif %}
+
             <hr>
                 <h1>{{ survey.topic }}</h1>
-                    <span>Rating: {{ survey.rating }}</span>
+                    <span>Rating: {{ survey.rating }}</span> |
                     <span>{{ survey.views }} times viewed</span>
                 <h3>Top items number: {{ survey.top_number }} </h3>
                 <p>Created at {{ survey.date_created|date:'d.m.Y' }}</p>
@@ -64,11 +72,11 @@
 
         {% endif %}
 
-            <a href="#">Show results (this will redirect to statistics page, where also avalable discussion and special details for creator)</a>
+            <a href="{% url 'comparison-survey-statistics' survey.id%}">Show results</a>
 
         {% else %}
             <p>Please, <a href="{% url 'login' %}">Sign in</a> or
-          <a href="{% url 'register' %}">Sign Up</a></p>
+            <a href="{% url 'register' %}">Sign Up</a></p>
     {% endif %}
 
 {% endblock %}

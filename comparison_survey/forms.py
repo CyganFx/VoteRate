@@ -5,7 +5,7 @@ from comparison_survey.models import ComparisonSurvey, RateObject, Complaint
 class ComparisonSurveyForm(forms.ModelForm):
     class Meta:
         model = ComparisonSurvey
-        fields = ('topic', 'description',)
+        fields = ('topic', 'description', 'category',)
 
 
 class RateObjectForm(forms.ModelForm):
