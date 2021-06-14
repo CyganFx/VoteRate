@@ -1,11 +1,13 @@
 import random
 
 from django.db.models import Count
-from django.http import Http404, HttpResponseRedirect
+from django.http import Http404, HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.utils import timezone
 from django.views.generic import ListView, DetailView, CreateView, UpdateView
+
+from voterate_django.utils import render_to_pdf
 from .forms import ComparisonSurveyForm, RateObjectForm, ComplaintForm
 from .models import ComparisonSurvey, RateObject, ComparisonSurveyResult, Complaint, Category, PassedSurvey
 
@@ -242,7 +244,7 @@ def statistics(request, survey_id, template='comparison_survey/csurvey.statistic
         for cs in results_raw:
             totalChoices = totalChoices + cs['total']
         for cs in results_raw:
-            labels.append(cs['rate_object__description'])
+            labels.append(f'{cs["rate_object__description"]} - {round(cs["total"] / totalChoices * 100, 1)} %')
             data.append(round(cs['total'] / totalChoices * 100, 1))
         context = {
             'survey': survey,
@@ -347,3 +349,23 @@ def csurvey_pass_view(request, pk, template='comparison_survey/csurvey.pass.page
         request.session['rateObjects'] = rateObjectsIDsList
         context['couple'] = couple
         return render(request, template, context=context)
+
+
+def generate_pdf(request, survey_id, template='comparison_survey/csurvey.statistics.pdf.html'):
+    """view for exporting statistics render as pdf file"""
+    survey = get_object_or_404(ComparisonSurvey, id=survey_id)
+    results_raw = ComparisonSurveyResult.objects.filter(survey__pk=survey_id) \
+        .values('rate_object__description', 'rate_object__media') \
+        .annotate(total=Count('respondent')).order_by('-total')
+    peoplePassed = PassedSurvey.objects.values('user').filter(survey=survey).count()
+    totalChoices = 0
+    for cs in results_raw:
+        totalChoices = totalChoices + cs['total']
+    context = {
+        'survey': survey,
+        'results': results_raw,
+        'peoplePassed': peoplePassed,
+        'totalChoices': totalChoices,
+    }
+    pdf = render_to_pdf(template, context)
+    return pdf

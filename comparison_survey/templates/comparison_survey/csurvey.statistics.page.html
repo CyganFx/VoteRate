@@ -11,6 +11,7 @@
         <h2>Results of {{ survey.topic }}</h2>
         <h3>Top {{ survey.top_number }}</h3>
         <h4>made by {{ survey.author.email }}</h4>
+        <span><a href="{% url 'comparison-survey-pdf' survey.id%}">Get results as pdf</a></span>
         <p>Viewed by {{ survey.views }} times</p>
         <p>{{ peoplePassed }} people passed</p>
         <table>
@@ -24,7 +25,7 @@
             {% for res in results %}
                 <tr>
                     <td>{{ forloop.counter }}</td>
-                    <td><img src="{{ res.rate_object__media }}" alt="media"></td>
+                    <td><img src="{{ res.rate_object__media }}" alt="media" width="100" height="100"></td>
                     <td>{{ res.rate_object__description }}</td>
                     <td>{{ res.total }}</td>
                     <td>{% widthratio res.total totalChoices 100 %}</td>
@@ -32,6 +33,7 @@
             {% endfor %}
         </table>
 
+        <br>
         <div id="container" style="width: 75%;">
             <canvas id="pie-chart"></canvas>
         </div>
