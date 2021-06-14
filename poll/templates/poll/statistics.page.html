@@ -1,20 +1,40 @@
 {% extends "comparison_survey/base.layout.html" %}
 {% block title %} Statistics {% endblock title %}
 {% block content %}
-    <h1>Statistics</h1>
+    <style>
+        .chart {
+            width: 600px;
+            height: 400px;
+        }
 
-    <ul class="list-group list-group-flush">
-        <li class="list-group-item">Passed: {{ pollStats.passedCounter }}</li>
-        <li class="list-group-item">Rated: {{ pollStats.rateCounter }}</li>
-        <li class="list-group-item">Women voted: {{ pollStats.womenNum }}</li>
-        <li class="list-group-item">Women overall percentage: {{ pollStats.womenPercentage }}%</li>
-        <li class="list-group-item">Men voted: {{ pollStats.manNum }}</li>
-        <li class="list-group-item">Men overall percentage: {{ pollStats.manPercentage }}%</li>
-        <li class="list-group-item">Percentage having higher education: {{ pollStats.higher_education_percentage }}%</li>
-        <li class="list-group-item">Votes from KZ: {{ pollStats.countryKZPercentage }}%</li>
-        <li class="list-group-item">Votes from USA: {{ pollStats.countryUSAPercentage }}%</li>
-        <li class="list-group-item">Average age: {{ pollStats.averageAge }} years</li>
-    </ul>
+        .chartContainer {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            flex-basis: 33.333%;
+            justify-content: center;
+            align-items: center;
+        }
+
+    </style>
+    <h1 style="text-align: center">Statistics</h1>
+    <div class="chartContainer">
+        <div class="barChart chart">
+            <canvas id="mySexChart"></canvas>
+        </div>
+        <div class="doughnutChart chart">
+            <canvas id="myCountriesChart"></canvas>
+        </div>
+        <div class="pieChart chart">
+            <canvas id="myEducationChart"></canvas>
+        </div>
+        <div class="barchart chart">
+            <canvas id="myRatedChart"></canvas>
+        </div>
+        <div class="barchart chart">
+            <canvas id="myAgeChart"></canvas>
+        </div>
+    </div>
 
     <h2>Title: {{ poll.title }}</h2>
     <img src="{{ poll.imageURL }}" alt="image" height="200px" width="200px"> <br>
@@ -29,5 +49,254 @@
             {% endif %}
         {% endfor %}
     {% endfor %}
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+    <script>
+        var ctx = document.getElementById('mySexChart').getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Women', 'Men'],
+                datasets: [{
+                    label: 'Sex oriented data in percents',
+                    data: [{{ pollStats.womenPercentage }}, {{ pollStats.manPercentage }}],
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                    ],
+                    borderColor: [
+                        'rgba(0,0,0,1)',
+                        'rgba(0,0,0,1)',
+                    ],
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                },
+                tooltips: {
+                    callbacks: {
+                        label: function (tooltipItem, data) {
+                            return data['labels'][tooltipItem['index']] + ': ' + data['datasets'][0]['data'][tooltipItem['index']] + '%';
+                        }
+                    }
+                }
+            }
+        });
+
+        var ctxCountries = document.getElementById('myCountriesChart').getContext('2d');
+        var myCountriesChart = new Chart(ctxCountries, {
+            type: 'doughnut',
+            data: {
+                labels: ['USA', 'KZ'],
+                datasets: [{
+                    label: 'Country differences',
+                    data: [{{ pollStats.countryUSAPercentage }}, {{ pollStats.countryKZPercentage }}],
+                    backgroundColor: [
+                        'rgba(230, 53, 53, .9)',
+                        'rgba(47, 184, 194, .9)',
+                    ],
+                    borderColor: [
+                        'rgba(0,0,0,1)',
+                        'rgba(0,0,0,1)',
+                    ],
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                title: {
+                    display: true,
+                    text: 'Country differences'
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                },
+                tooltips: {
+                    callbacks: {
+                        label: function (tooltipItem, data) {
+                            return data['labels'][tooltipItem['index']] + ': ' + data['datasets'][0]['data'][tooltipItem['index']] + '%';
+                        }
+                    }
+                }
+            }
+        });
+
+        var ctxEducation = document.getElementById('myEducationChart').getContext('2d');
+        var myEducationChart = new Chart(ctxEducation, {
+            type: 'pie',
+            data: {
+                labels: ['Have', 'Dont have'],
+                datasets: [{
+                    label: 'Higher Education',
+                    data: [{{ pollStats.higher_education_percentage }}, 100 - {{ pollStats.higher_education_percentage }}],
+                    backgroundColor: [
+                        'rgba(29, 240, 99, .85)',
+                        'rgba(176, 179, 170, .85)',
+                    ],
+                    borderColor: [
+                        'rgba(0,0,0,1)',
+                        'rgba(0,0,0,1)',
+                    ],
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                title: {
+                    display: true,
+                    text: 'Higher Education'
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                },
+                tooltips: {
+                    callbacks: {
+                        label: function (tooltipItem, data) {
+                            return data['labels'][tooltipItem['index']] + ': ' + data['datasets'][0]['data'][tooltipItem['index']] + '%';
+                        }
+                    }
+                }
+            }
+        });
+
+        var ctxHorizontal = document.getElementById('myRatedChart').getContext('2d');
+        var horizontalBarChart = new Chart(ctxHorizontal, {
+            type: 'horizontalBar',
+            data: {
+                labels: ['Rated', 'Total Passed'],
+                datasets: [{
+                    data: [{{ pollStats.rateCounter }}, {{ pollStats.passedCounter }}],
+                    backgroundColor: ["#73BFB8", "#73BFB8"],
+                }]
+            },
+            options: {
+                tooltips: {
+                    enabled: false
+                },
+                responsive: true,
+                legend: {
+                    display: false,
+                    position: 'bottom',
+                    fullWidth: true,
+                    labels: {
+                        boxWidth: 10,
+                        padding: 50
+                    }
+                },
+                scales: {
+                    yAxes: [{
+                        gridLines: {
+                            display: true,
+                            drawTicks: true,
+                            drawOnChartArea: false
+                        },
+                        ticks: {
+                            fontColor: '#555759',
+                            fontFamily: 'Lato',
+                            fontSize: 15
+                        }
+
+                    }],
+                    xAxes: [{
+                        gridLines: {
+                            display: true,
+                            drawTicks: false,
+                            tickMarkLength: 5,
+                            drawBorder: false
+                        },
+                        ticks: {
+                            padding: 5,
+                            beginAtZero: true,
+                            fontColor: '#555759',
+                            fontFamily: 'Lato',
+                            fontSize: 15,
+                        },
+                        scaleLabel: {
+                            display: true,
+                            padding: 10,
+                            fontFamily: 'Lato',
+                            fontColor: '#555759',
+                            fontSize: 25,
+                            fontStyle: 700,
+                            labelString: 'Rated and Total Passed'
+                        },
+                    }]
+                }
+            }
+        });
+
+        var ctxHorizontalAge = document.getElementById('myAgeChart').getContext('2d');
+        var horizontalAgeBarChart = new Chart(ctxHorizontalAge, {
+            type: 'horizontalBar',
+            data: {
+                labels: ['Age'],
+                datasets: [{
+                    data: [{{ pollStats.averageAge }}],
+                    backgroundColor: ['rgba(235, 165, 35, 1)'],
+                }]
+            },
+            options: {
+                tooltips: {
+                    enabled: false
+                },
+                responsive: true,
+                legend: {
+                    display: false,
+                    position: 'bottom',
+                    fullWidth: true,
+                    labels: {
+                        boxWidth: 10,
+                        padding: 50
+                    }
+                },
+                scales: {
+                    yAxes: [{
+                        gridLines: {
+                            display: true,
+                            drawTicks: true,
+                            drawOnChartArea: false
+                        },
+                        ticks: {
+                            fontColor: '#555759',
+                            fontFamily: 'Lato',
+                            fontSize: 15
+                        }
+
+                    }],
+                    xAxes: [{
+                        gridLines: {
+                            display: true,
+                            drawTicks: false,
+                            tickMarkLength: 5,
+                            drawBorder: false
+                        },
+                        ticks: {
+                            padding: 5,
+                            beginAtZero: true,
+                            fontColor: '#555759',
+                            fontFamily: 'Lato',
+                            fontSize: 15,
+                        },
+                        scaleLabel: {
+                            display: true,
+                            padding: 10,
+                            fontFamily: 'Lato',
+                            fontColor: '#555759',
+                            fontSize: 25,
+                            fontStyle: 700,
+                            labelString: 'Average age'
+                        },
+                    }]
+                }
+            }
+        });
+
+    </script>
 
 {% endblock content %}

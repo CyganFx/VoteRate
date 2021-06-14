@@ -106,3 +106,46 @@ def DeleteComparisonSurvey(request, id, template='comparison_survey/survey.edit.
         data.delete()
         return redirect('/my-surveys')
     return render(request, template)
+
+
+# first place takes 4 score, second place 3 score ...
+def ComparisonLogic():
+    """
+    if request.Method == GET (session not exist):
+        create session for list of RateObjectIDs and for TOP
+        insert all 16 RateObjects from db in session
+        set session list ot some list variable
+        extract 2 random objects from list variable
+        delete everything from session
+        insert new list variable with 14 objects to session
+        return to user these 2 random objects
+
+    else:
+        chosen_obj_id = request.POST.get('chosed_obj_id')
+        unchosen_obj_id = request.POST.get('unchosen_obj_id')
+
+        insert chosen_obj_id and unchosen_obj_id to temp_db
+
+        list_session = session.get('list_of_obj')
+
+        top = get top from database
+
+        if top == 1 and len(list_session) == 0: (in this case it's already 2 objects left and 1 pair)
+            increase score by 10 for RateObject having id unchosen_obj_id (2nd place)
+            increase score by 20 for RateObject having id chosen_obj_id (1st place)
+            insert some data to ComparisonSurveyResult()
+            return chosen_obj_id and redirect to congratulation page
+
+        if len(list_session) == 0 and top != 1:
+            list_session = select all chosen_RateObjectIDs from temp_db
+            delete everything from temp_db except TOP and divide TOP by 2
+
+
+        extract 2 random RateObjectIDs from list_session
+        delete everything from session
+        insert new list variable with len(list_session) objects to session
+
+        return 2 objects to front
+    """
+
+    pass
