@@ -2,7 +2,6 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.utils import timezone
 
-
 class Category(models.Model):
     """model defines one of the properties of Comparison Survey"""
     title = models.CharField(max_length=50, default='entertainment')

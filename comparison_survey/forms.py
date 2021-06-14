@@ -18,3 +18,4 @@ class ComplaintForm(forms.ModelForm):
     class Meta:
         model = Complaint
         fields = ('reason',)
+

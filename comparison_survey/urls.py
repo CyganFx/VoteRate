@@ -1,6 +1,8 @@
 from django.urls import path
 from comparison_survey.views import *
 
+from comparison_survey import views as comparison_survey_views
+
 urlpatterns = [
     # for any user
     path('', ComparisonSurveyAll.as_view(), name='comparison-survey-home'),
