@@ -8,6 +8,8 @@ urlpatterns = [
 
     path('category/<int:category_id>', CSurveysByCategory.as_view(), name='comparison-survey-by-category'),
 
+    path('pass/<int:pk>', csurvey_pass_view, name='comparison-survey-pass'),
+
     # path('search/<str:topic>'),
 
     # for authorized users

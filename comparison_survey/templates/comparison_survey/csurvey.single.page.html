@@ -5,45 +5,45 @@
 {% block title %}{{ survey.topic }}{% endblock %}
 
 {% block contents %}
-     <!--MESSAGES WOULD BE OUTPUTTED HERE. THERE CAN BE USED BOOTSTRAP TOASTS-->
-        {% if messages %}
-                {% for message in messages %}
-                    <p {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</p>
-                {% endfor %}
+    <!--MESSAGES WOULD BE OUTPUTTED HERE. THERE CAN BE USED BOOTSTRAP TOASTS-->
+    {% if messages %}
+        {% for message in messages %}
+            <p {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</p>
+        {% endfor %}
+    {% endif %}
+    <div>
+        <hr>
+
+        <h1>{{ survey.topic }}</h1>
+        <span>Rating: {{ survey.rating }}</span>
+        <p>Created at {{ survey.date_created|date:'d.m.Y' }}</p>
+        {% if passedSurvey %}<span>You have already passed this survey at {{ passedSurvey.last_passed_date }}</span>{% endif %}
+        <hr>
+
+        <p>Description: <br>{{ survey.description }}</p>
+    </div>
+
+    <h3>Rate Objects</h3>
+
+    {% if rateObjects %}
+
+        <!--Without any rate object there is no any result, no need to leave complaint, no need to pass-->
+        {% if survey.top_number > 0 and survey.top_number|divisibleby:2 %}
+            <a href="{% url 'comparison-survey-pass' pk=survey.pk %}">Pass this survey</a>
         {% endif %}
-        <div>
-            <hr>
+        <a href="{% url 'comparison-survey-statistics' survey.id %}">Show rating</a>
+        <a href="{% url 'comparison-survey-feedback' survey.id %}">Leave feedback</a>
 
-            <h1>{{ survey.topic }}</h1>
-                <span>Rating: {{ survey.rating }}</span>
-            <p>Created at {{ survey.date_created|date:'d.m.Y' }}</p>
-
-            <a href="#">Pass (needs to be realized)</a>
-
-            <hr>
-
-                <p>Description: <br>{{ survey.description }}</p>
-        </div>
-
-        <h3>Rate Objects</h3>
-
-        {% if rateObjects %}
-
-            <!--Without any rate object there is no any result, no need to leave complaint-->
-            <a href="#">Pass Survey</a>
-            <a href="{% url 'comparison-survey-statistics' survey.id%}">Show results</a>
-            <a href="{% url 'comparison-survey-feedback' survey.id%}">Leave feedback</a>
-
-            {% for ro in rateObjects %}
+        {% for ro in rateObjects %}
+            <div>
+                <p>{{ ro.description }}</p>
                 <div>
-                    <p>{{ ro.description }}</p>
-                    <div>
-                        <p><img src="{{ ro.media }}" alt="object-media"></p>
-                    </div>
+                    <p><img src="{{ ro.media }}" alt="object-media"></p>
                 </div>
-            {% endfor %}
-        {% else %}
-            <p>No rating objects added. Please, check later</p>
-        {% endif %}
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>No rating objects added. Please, check later</p>
+    {% endif %}
 
 {% endblock %}

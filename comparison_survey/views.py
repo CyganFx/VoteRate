@@ -1,10 +1,13 @@
+import random
+
 from django.db.models import Count
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
+from django.utils import timezone
 from django.views.generic import ListView, DetailView, CreateView, UpdateView
 from .forms import ComparisonSurveyForm, RateObjectForm, ComplaintForm
-from .models import ComparisonSurvey, RateObject, ComparisonSurveyResult, Complaint, Category
+from .models import ComparisonSurvey, RateObject, ComparisonSurveyResult, Complaint, Category, PassedSurvey
 
 
 # #### Comparison Survey views (CRUD) ####
@@ -51,10 +54,12 @@ class ComparisonSurveyDetail(DetailView):
     def get_context_data(self, *args, **kwargs):
         context = super(ComparisonSurveyDetail, self).get_context_data(*args, **kwargs)
         context['rateObjects'] = RateObject.objects.all().filter(survey_id=self.object.id)
-
         cs_object = self.get_object()
         cs_object.views += 1
         cs_object.save()
+
+        if PassedSurvey.objects.filter(user=self.request.user, survey=self.get_object()).count() > 0:
+            context['passedSurvey'] = PassedSurvey.objects.get(user=self.request.user, survey=self.get_object())
         return context
 
 
@@ -64,9 +69,14 @@ def retrieve_creator_comparison_surveys(request, template='comparison_survey/das
     """Returns all surveys created by exact user (user id retrieved from request.user) - dashboard.page.html"""
     try:
         creatorSurveys = ComparisonSurvey.objects.filter(author=request.user.id).order_by('category__title')
+        viewsAll = ComparisonSurvey.objects.values('views')
+        totalViews = 0
+        for v in viewsAll:
+            totalViews = totalViews + v['views']
         context = {
             'mySurveys': creatorSurveys,
             'total': creatorSurveys.count(),
+            'totalViews': totalViews,
         }
     except ComparisonSurvey.DoesNotExist:
         raise Http404('No surveys found for this creator')
@@ -148,6 +158,10 @@ def create_rate_object(request, survey_id, template='comparison_survey/csurvey.c
     if form.is_valid():
         form.instance.survey = survey
         form.save()
+
+        if survey.top_number % 2 != 0:
+            messages.warning(request, "Rate objects quantity must be even!")
+
         return redirect('my-survey', survey.pk)
     return render(request, template, {'create_ro_form': form})
 
@@ -217,12 +231,26 @@ def statistics(request, survey_id, template='comparison_survey/csurvey.statistic
     try:
         survey = get_object_or_404(ComparisonSurvey, id=survey_id)
 
+        labels = []
+        data = []
+
         results_raw = ComparisonSurveyResult.objects.filter(survey__pk=survey_id) \
-            .select_related('respondent', 'rate_object') \
-            .annotate(total=Count('respondent')).order_by('total')
+            .values('rate_object__description', 'rate_object__media') \
+            .annotate(total=Count('respondent')).order_by('-total')
+        peoplePassed = PassedSurvey.objects.values('user').filter(survey=survey).count()
+        totalChoices = 0
+        for cs in results_raw:
+            totalChoices = totalChoices + cs['total']
+        for cs in results_raw:
+            labels.append(cs['rate_object__description'])
+            data.append(round(cs['total'] / totalChoices * 100, 1))
         context = {
             'survey': survey,
             'results': results_raw,
+            'peoplePassed': peoplePassed,
+            'totalChoices': totalChoices,
+            'labels': labels,
+            'data': data,
         }
     except ComparisonSurveyResult.DoesNotExist:
         raise Http404('No comparison survey results found')
@@ -264,3 +292,58 @@ def complaints_for_csurvey(request, survey_id, template='comparison_survey/csurv
         raise Http404('No comparison survey found')
 
     return render(request, template, context=context)
+
+
+def csurvey_pass_view(request, pk, template='comparison_survey/csurvey.pass.page.html'):
+    """View for passing survey where temporary data saved on session. View where tracked user's survey pass"""
+    if request.method == 'POST':
+        print(request.POST.get('choice'))
+        if request.POST.get('choice'):
+            ro = RateObject.objects.get(pk=request.POST.get('choice'))
+            cs = ComparisonSurvey.objects.get(pk=pk)
+            # recording user choice
+            newRecord = ComparisonSurveyResult.objects.create(respondent=request.user, survey=cs,
+                                                              rate_object=ro)
+        return redirect('comparison-survey-pass', pk=pk)
+    else:
+        survey = ComparisonSurvey.objects.get(id=pk)
+        context = {
+            'survey': survey
+        }
+
+        # returns set of rate objects if they were stored in session or adds new set of ro
+        rateObjectsIDsList = list(
+            request.session.get('rateObjects', RateObject.objects.filter(survey_id=pk).values_list('pk', flat=True)))
+
+        # check if user completed survey or not
+        if len(rateObjectsIDsList) != survey.top_number and request.session.get('completed'):
+            del request.session['rateObjects']
+            del request.session['completed']
+
+        print(f'rate object left = {rateObjectsIDsList}')
+
+        # survey pass termination point
+        if len(rateObjectsIDsList) - 1 <= 0:
+            request.session['completed'] = True
+
+            # record to user's completed surveys list
+            if PassedSurvey.objects.filter(user=request.user, survey=survey).count() > 0:
+                # update time of completion if user completed it before
+                passedSurvey = PassedSurvey.objects.get(user=request.user, survey=survey.id)
+                passedSurvey.last_passed_date = timezone.now()
+                passedSurvey.save()
+            else:
+                # record it if user passes it first time
+                _ = PassedSurvey.objects.create(user=request.user, survey=survey)
+            return redirect('comparison-survey-statistics', survey.id)
+        # taking couple of random ro from set of ro
+        coupleIDs = random.sample(rateObjectsIDsList, k=2)
+        couple = []
+        # safe deletion of choice couples in order to keep track of survey pass AND getting objects of ro from db
+        for choice in coupleIDs:
+            rateObjectsIDsList.remove(choice)
+            couple.append(RateObject.objects.get(pk=choice))
+        # recording current user survey variants (ro) to session
+        request.session['rateObjects'] = rateObjectsIDsList
+        context['couple'] = couple
+        return render(request, template, context=context)

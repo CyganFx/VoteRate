@@ -53,7 +53,9 @@
                                 <p>created at: {{ cs.date_created|date:'d-m-Y' }} | rating <small>{{ cs.rating }}</small></p>
                                 <p>{{ cs.description|truncatechars:15 }}</p>
                                         <div>
-                                        <a href="#">Pass (needs to be realized)</a>
+                                            {% if cs.top_number > 0 and cs.top_number|divisibleby:2 %}
+                                                <a href="{% url 'comparison-survey-pass' cs.pk %}">Pass</a>
+                                            {% endif %}
                                             <a href="{% url 'comparison-survey-by-id' cs.pk %}">More</a>
                                         </div>
                                 <hr>

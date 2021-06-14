@@ -1,0 +1,44 @@
+{% extends "comparison_survey/csurvey.base.layout.html" %}
+
+<!--PASSING CSURVEYS PAGE-->
+
+{% block title %}Pass - {{ survey.topic }}{% endblock %}
+
+{% block contents %}
+
+    {% if user.is_authenticated %}
+        <div>
+
+            <!--MESSAGES WOULD BE OUTPUTTED HERE. THERE CAN BE USED BOOTSTRAP TOASTS-->
+            {% if messages %}
+                {% for message in messages %}
+                    <p {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</p>
+                {% endfor %}
+            {% endif %}
+
+            <hr>
+            <h1>{{ survey.topic }}</h1>
+            <h3>Top items number: {{ survey.top_number }} </h3>
+            <hr>
+
+        </div>
+
+        <div>
+            <form action="{% url 'comparison-survey-pass' pk=survey.id %}" method="post">
+                {% csrf_token %}
+                {% for i in couple %}
+                    <label>{{ i.description }}
+                        <img src="{{ i.media }}" alt="media - {{ i.description }}">
+                        <input type="radio" name="choice" value="{{ i.id }}">
+                    </label>
+                {% endfor %}
+                <input type="submit" name="" value="Choose">
+            </form>
+        </div>
+
+    {% else %}
+        <p>Please, <a href="{% url 'login' %}">Sign in</a> or
+            <a href="{% url 'register' %}">Sign Up</a></p>
+    {% endif %}
+
+{% endblock %}
