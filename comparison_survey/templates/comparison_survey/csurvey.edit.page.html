@@ -1,0 +1,17 @@
+{% extends "comparison_survey/csurvey.base.layout.html" %}
+
+{% block title %}Edit{% endblock %}
+
+{% block contents %}
+<form method="post">
+        {% csrf_token %}
+        {% for field in form.visible_fields %}
+                <label for="{{ field.id_for_label }}">{{field.label}}</label>
+                {{field}}
+        {% endfor %}
+        <div>
+            <button type="submit">Update</button>
+            <a href="{% url 'my-surveys-all' %}">Cancel</a>
+        </div>
+    </form>
+{% endblock %}

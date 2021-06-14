@@ -1,10 +1,64 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "comparison_survey/csurvey.base.layout.html" %}
 
-</body>
-</html>
+<!--USER's CSURVEYS PAGE. LATER WOULD BE ADDED STATISTICS (number of views total, number of created csurveys)-->
+
+{% block title %}Dashboard{% endblock %}
+
+{% block contents %}
+    <a href="{% url 'my-surveys-new' %}">Create new</a>
+    {% if user.is_authenticated %}
+             {% if mySurveys %}
+            <div>
+                    <h1>My Surveys</h1>
+            </div>
+
+                 <hr>
+                    <a href="{% url 'complaints-list' %}">SPECIAL MODERATORS CAN SEE THIS - Moderation</a>
+                 <hr>
+                 <!--MESSAGES WOULD BE OUTPUTTED HERE. THERE CAN BE USED BOOTSTRAP TOASTS-->
+        {% if messages %}
+                {% for message in messages %}
+                    <p {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</p>
+                {% endfor %}
+        {% endif %}
+
+                 <h4>Total {{ total }} surveys. {{ totalViews }} times viewed</h4>
+                 <table>
+                    <tr>
+                        <th>Topic</th>
+                        <th>Category</th>
+                        <th>Top number</th>
+                        <th>Actions</th>
+                    </tr>
+                 {% for cs in mySurveys %}
+                     <tr>
+                        <td>
+                            <h3><a href="{% url 'my-survey' cs.pk %}">{{cs.topic}}</a></h3>
+                        </td>
+                        <td>
+                            <p>{{ cs.category }}</p>
+                        </td>
+                        <td>
+                            <p>{{ cs.top_number }}</p>
+                        </td>
+                        <td>
+                            <a href="{% url 'my-surveys-change' cs.pk %}">&#x270E;</a>
+                            <form action="{% url 'my-surveys-delete' cs.id%}" method="post">
+                                {% csrf_token %}
+                                <button type="submit" class="save btn btn-default">&#x2612;</button>
+                            </form>
+                        </td>
+                     </tr>
+                {% endfor %}
+                </table>
+             {% else %}
+                <h3>No results found</h3>
+                 <a href="{% url 'my-surveys-new' %}">Create your own comparison survey</a>
+            {% endif %}
+            <!--STATISTICS ALSO NEEDED-->
+
+    {% else %}
+        <p>Please, <a href="{% url 'login' %}">Sign in</a> or
+          <a href="{% url 'register' %}">Sign Up</a></p>
+    {% endif %}
+{% endblock %}

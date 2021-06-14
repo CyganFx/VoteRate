@@ -1,0 +1,97 @@
+{% extends "comparison_survey/csurvey.base.layout.html" %}
+
+<!-- THERE WOULD BE RENDERED STATISTICS ABOUT USERS' C. Survey PASS (RATING OF RATE OBJECTS).
+ -->
+
+{% block title %} Statistics - {{ survey.topic }}{% endblock %}
+
+{% block contents %}
+    <a href="{% url 'comparison-survey-by-id' survey.pk %}">Go back</a>
+    {% if results %}
+        <h2>Results of {{ survey.topic }}</h2>
+        <h3>Top {{ survey.top_number }}</h3>
+        <h4>made by {{ survey.author.email }}</h4>
+        <span><a href="{% url 'comparison-survey-pdf' survey.id%}">Get results as pdf</a></span>
+        <p>Viewed by {{ survey.views }} times</p>
+        <p>{{ peoplePassed }} people passed</p>
+        <table>
+            <tr>
+                <th>Rating</th>
+                <th>Media</th>
+                <th>Rate Object Name</th>
+                <th>Score</th>
+                <th>Ratio of choices, %</th>
+            </tr>
+            {% for res in results %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td><img src="{{ res.rate_object__media }}" alt="media" width="100" height="100"></td>
+                    <td>{{ res.rate_object__description }}</td>
+                    <td>{{ res.total }}</td>
+                    <td>{% widthratio res.total totalChoices 100 %}</td>
+                </tr>
+            {% endfor %}
+        </table>
+
+        <br>
+        <div id="container" style="width: 75%;">
+            <canvas id="pie-chart"></canvas>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+        <script>
+
+            function getRandomColor() {
+                var letters = '0123456789ABCDEF';
+                var color = '#';
+                for (var i = 0; i < 6; i++) {
+                    color += letters[Math.floor(Math.random() * 16)];
+                }
+                return color;
+            }
+
+            colors_arr = []
+
+            for (i = 0; i < {{ survey.top_number }}; i++) {
+                colors_arr.push(getRandomColor())
+            }
+
+            var config = {
+                type: 'doughnut',
+                data: {
+                    datasets: [{
+                        data: {{ data|safe }},
+
+                        backgroundColor: colors_arr,
+                    }],
+                    labels: {{ labels|safe }}
+                },
+                options: {
+                    responsive: true
+                }
+            };
+
+            window.onload = function () {
+                var ctx = document.getElementById('pie-chart').getContext('2d');
+                window.myPie = new Chart(ctx, config);
+            };
+        </script>
+
+    {% else %}
+        <h4>No statistical data found for Comparison Survey - {{ survey.topic }}</h4>
+    {% endif %}
+
+{% endblock %}
+
+
+{% comment %}
+    {% if user.is_authenticated %}
+
+        send comment form here
+
+    {% else %}
+
+        <p>Please, <a href="{% url 'login' %}">Sign in</a> or
+            <a href="{% url 'register' %}">Sign Up</a> to leave a comment</p>
+
+    {% endif %}
+{% endcomment %}

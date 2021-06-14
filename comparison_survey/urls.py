@@ -1,43 +1,31 @@
 from django.urls import path
 from comparison_survey.views import *
 
-'''
-we are here voterate.com/comparison_survey
-
-    "description of url - url - template" # (optional->comment whole blocks of urls)
-
-retrieve 
-    all surveys - / - home.page.html # available for any user 
-    survey by id - /<int:id> - survey.page.html # available for any user
-    survey(s) - search.page.html
-                by top number - /search/<int:num>
-                by topic - /search/<str:topic>
-                by date - /search/<int:year>/<int:month> # ?(shows starting from that date) 
-
-# comparison surveys can be modified only by the creator of surveys
-
-# below urls available for registered users
-
-retrieve creators survey(s) - /my-surveys - dashboard.page.html
-                             (/my-surveys/<int:id>) - survey.page.html
-create new survey - /my-surveys/edit - survey.edit.page.html
-update survey - /my-surveys/edit/id - survey.edit.page.html
-delete survey - /my-surveys/remove/id - survey.edit.page.html, survey.page.html (button with request link)
-'''
-
 urlpatterns = [
     # for any user
-    path('', RetrieveAllComparisonSurvey, name='comparison_survey-home'),
-    path('<int:id>', RetrieveComparisonSurveyById, name='comparison_survey-by-id'),
-    # TODO - implement search view for comparison survey
-    # path('search/<int:num>'),
+    path('', ComparisonSurveyAll.as_view(), name='comparison-survey-home'),
+    path('<int:pk>', ComparisonSurveyDetail.as_view(), name='comparison-survey-by-id'),
+
+    path('category/<int:category_id>', CSurveysByCategory.as_view(), name='comparison-survey-by-category'),
+
+    path('pass/<int:pk>', csurvey_pass_view, name='comparison-survey-pass'),
+    path('pdf/<int:survey_id>', generate_pdf, name='comparison-survey-pdf'),
+
     # path('search/<str:topic>'),
-    # path('search/<int:year>/<int:month>'),  # experiment
+
     # for authorized users
-    path('my-surveys', RetrieveCreatorComparisonSurveys),
-    path('my-surveys/<int:id>', RetrieveComparisonSurveyOfCreatorById),
-    path('my-surveys/edit', CreateComparisonSurvey),
-    path('my-surveys/edit/<int:id>', UpdateComparisonSurvey),
-    path('my-surveys/remove/<int:id>', DeleteComparisonSurvey),
-    # TODO - RateObject model CRUD urls needed to be implemented
+    path('rate/<int:survey_id>', rate_csurvey, name='comparison-survey-rate'),
+    path('my_surveys/all', retrieve_creator_comparison_surveys, name='my-surveys-all'),
+    path('my_surveys/<int:pk>', retrieve_comparison_survey_of_creator_by_id, name='my-survey'),
+    path('my_surveys/edit', CreateCSurvey.as_view(), name='my-surveys-new'),
+    path('my_surveys/edit/<int:cs_pk>', EditCSurvey.as_view(), name='my-surveys-change'),
+    path('my_surveys/remove/<int:id>', delete_csurvey, name='my-surveys-delete'),
+    path('my_surveys/ro/<survey_id>', create_rate_object, name='rate-object-new'),
+    path('my_surveys/ro/remove/<int:ro_pk>', delete_rate_object, name='rate-object-delete'),
+
+    path('feedback/<int:survey_id>', feedback_actions, name='comparison-survey-feedback'),
+    path('statistics/<int:survey_id>', statistics, name='comparison-survey-statistics'),
+    path('complaint/<int:survey_id>', leave_complaint, name='comparison-survey-new-complaint'),
+    path('complaint', ComplaintAll.as_view(), name='complaints-list'),
+    path('complaints/for/<int:survey_id>', complaints_for_csurvey, name='comparison-survey-complaints')
 ]

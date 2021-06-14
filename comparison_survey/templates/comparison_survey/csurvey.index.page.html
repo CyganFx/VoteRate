@@ -1,0 +1,73 @@
+{% extends "comparison_survey/csurvey.base.layout.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block contents %}
+
+     <!--MESSAGES WOULD BE OUTPUTTED HERE. THERE CAN BE USED BOOTSTRAP TOASTS-->
+        {% if messages %}
+                {% for message in messages %}
+                    <p {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</p>
+                {% endfor %}
+        {% endif %}
+
+    {% if category_list %}
+        <h2>Categories</h2>
+            <a href='{% url 'comparison-survey-home' %}'>All</a>
+        {% for category in category_list %}
+            <a href='{% url 'comparison-survey-by-category' category.id %}'>{{ category.title }}</a>
+        {% endfor %}
+    {% endif %}
+
+    {% if category_item %}
+        <h3>Results by category: {{ category_item.title }}</h3>
+    {% endif %}
+
+    {% if cSurveys %}
+        <div>
+             <h1>Surveys</h1>
+        </div>
+             <h3>Total: {{ total }}</h3>
+        <div>
+                {% if is_paginated %}
+                            <ul>
+                            {% if page_obj.has_previous %}
+                                <li><a href="?page={{ page_obj.previous_page_number }}">&laquo;</a></li>
+                            {% endif %}
+
+                            {% for i in paginator.page_range %}
+                                <li {% if page_obj.number == i %} class="active" {% endif %}>
+                                    <a href="?page={{i}}">{{ i }}</a>
+                                </li>
+                            {% endfor %}
+
+                            {% if page_obj.has_next %}
+                                <li><a href="?page={{ page_obj.next_page_number }}">&raquo;</a></li>
+                            {% endif %}
+                            </ul>
+                {% endif %}
+        </div>
+                 {% for cs in cSurveys %}
+                                <h2>{{ cs.topic }} - {{ cs.top_number }}</h2>
+                                <p>Category: {{ cs.category }}</p>
+                                <p>created at: {{ cs.date_created|date:'d-m-Y' }} | rating <small>{{ cs.rating }}</small></p>
+                                <p>{{ cs.description|truncatechars:15 }}</p>
+                                        <div>
+                                            {% if cs.top_number > 0 and cs.top_number|divisibleby:2 %}
+                                                <a href="{% url 'comparison-survey-pass' cs.pk %}">Pass</a>
+                                            {% endif %}
+                                            <a href="{% url 'comparison-survey-by-id' cs.pk %}">More</a>
+                                        </div>
+                                <hr>
+                {% endfor %}
+
+             {% else %}
+
+                <h4>No surveys added. Check later</h4>
+
+                    {% if user.is_authenticated %}
+                 <a href="{% url 'my-surveys-new' %}">Create your own comparison survey</a>
+                    {% endif %}
+    {% endif %}
+
+{% endblock %}

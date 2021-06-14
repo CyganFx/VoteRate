@@ -1,0 +1,35 @@
+{% extends "comparison_survey/csurvey.base.layout.html" %}
+
+<!-- THIS IS MODERATOR PAGE
+ -->
+
+{% block title %} Moderation{% endblock %}
+
+{% block contents %}
+    {% if user.is_authenticated %}
+        {% if complaints %}
+            <table>
+            <tr>
+                <th>#</th>
+                <th>Comparison survey</th>
+                <th>Number of complaints</th>
+                <th>Actions</th>
+            </tr>
+            {% for cs in complaints %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td><a href="{% url 'comparison-survey-complaints' cs.survey_id%}">{{ cs.survey__topic }}</a></td>
+                    <td>{{ cs.total }}</td>
+                    <td>Delete Or Freeze</td>
+                </tr>
+
+            {% endfor %}
+            </table>
+        {% else %}
+            <h2>No incoming complaints</h2>
+        {% endif %}
+    {% else %}
+            <p>Please, <a href="{% url 'login' %}">Sign in</a> or
+            <a href="{% url 'register' %}">Sign Up</a></p>
+    {% endif %}
+{% endblock %}
