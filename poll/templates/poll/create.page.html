@@ -2,7 +2,7 @@
 {% load crispy_forms_tags %}
 {% block title %} Poll {% endblock title %}
 {% block content %}
-    <h1>Create Poll</h1>
+    <h1 style="text-align: center">Create Poll</h1>
 
     <form method="POST" action="{% url 'poll-create' %}">
         {% csrf_token %}
