@@ -141,7 +141,7 @@ def delete_csurvey(request, id, template='comparison_survey/survey.edit.page.htm
     if request.method == 'POST':
         data.delete()
 
-        return redirect('/my-surveys')
+        return redirect('my-surveys-all')
     return render(request, template)
 
 # #### Rate Objects' views (CRUD) ####
