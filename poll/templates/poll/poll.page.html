@@ -3,10 +3,37 @@
 {% block content %}
     <h1>Poll Page</h1>
     <form method="post" action="{% url 'poll-vote' %}">
+
+
+    <div class="polls" style="border: 1px solid black; margin-left: 3px" >
+
+     <table class="table table-hover" cellpadding="0" cellspacing="0" width="100%" border="0" style="background-color: #D8BFD8			">
+  <thead>
+    <tr class="table-secondary">
+      <th style="padding-right: 50px">Title</th>
+      <th style="padding-right: 50px">Questions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="border-right: 1px solid black" width="35%"><br>
+
+
+
         {% csrf_token %}
         <h2>Title: {{ poll.title }}</h2>
         <img src="{{ poll.imageURL }}" alt="image" height="200px" width="200px"> <br>
         <h3>Description: {{ poll.description }} </h3>
+
+
+
+
+      </td>
+
+      <td>
+
+
+
         <h3>Questions: </h3>
         <input type="hidden" name="numOfQuestions" value="{{ numOfQuestions }}">
         <input type="hidden" name="poll_id" value="{{ poll.id }}">
@@ -15,11 +42,22 @@
             <h4>Question: {{ pollQuestion.content }}</h4>
             {% for pollAnswer in pollAnswers %}
                 {% if pollAnswer.question_id.id == pollQuestion.id %}
-                    <input type="radio" name="answer_for_question{{ pollAnswer.question_id.id }}"
+                    <input type="radio" class="form-check-input" name="answer_for_question{{ pollAnswer.question_id.id }}"
                            value="{{ pollAnswer.id }}">{{ pollAnswer.content }}<br>
                 {% endif %}
             {% endfor %}
         {% endfor %}
         <input type="submit" value="Submit">
+
+
+
+      </td>
+    </tr></tbody></table></div>
+
+
+
+
     </form>
 {% endblock content %}
+
+

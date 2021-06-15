@@ -1,6 +1,8 @@
 {% extends "comparison_survey/base.layout.html" %}
 {% block title %} Poll {% endblock title %}
 {% block content %}
+
+
     <!-- Search Start -->
     <div class="jumbotron border shadow">
         <div class="row">
@@ -22,16 +24,40 @@
 
     <h1>List of polls:</h1>
 
-    {% for data in dataset %}
-        <h1>Title: {{ data.title }}</h1>
-        <img src="{{ data.imageURL }}" alt="image" height="200px" width="200px"> <br>
-        <ul class="list-group">
-            <li class="list-group-item">Description: {{ data.description }}</li>
-            <li class="list-group-item">Rating: {{ data.rating }}</li>
-            <li class="list-group-item">Passed: {{ data.passedCounter }} people</li>
-            <li class="list-group-item">Created at: {{ data.createdAt }}</li>
-            <li class="list-group-item">Category: {{ data.category_id.name }}</li>
-        </ul>
+ {% for data in dataset %}
+     <div class="polls" style="border: 1px solid pink; margin-left: 3px" >
+
+     <table class="table table-hover" style="margin: 5px">
+  <thead>
+    <tr class="table-secondary">
+      <th  style="padding-right: 50px"></th>
+      <th style="padding-right: 50px">Title/Description</th>
+      <th style="padding-right: 50px">Rating</th>
+      <th style="padding-right: 50px">Passed</th>
+      <th style="padding-right: 100px">Created at</th>
+        <th style="padding-right: 100px">Category</th>
+        <th style="padding-right: 50px">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="border-right: 1px solid black"><br>
+
+      <img src="{{ data.imageURL }}" alt="image" height="200px" width="250px">
+         <br><br> <p><a href="/poll/{{ data.id }}/comments"><input type=button title="comment this poll" class="btn btn-primary" value='Comment'></a>
+<a href="/poll/{{ data.id }}"> <input type=button class="btn btn-primary" title="pass this poll" value='Pass now'> </a>
+       <a href="/poll/{{ data.id }}/stats"><input type=button class="btn btn-primary" title="View total statistics about this poll" value='View stat'></a>
+
+
+      </td>
+      <td > {{data.title}} / {{ data.description }}</td>
+      <td>{{ data.rating }}</td>
+        <td>{{ data.passedCounter }} people</td>
+         <td> {{ data.createdAt }}</td>
+         <td>{{ data.category_id.name }}</td>
+
+
+<td>
         {% for poll_id in passedPolls %}
             {% if poll_id == data.id %}
                 <p>Status: <span style="color: green">Passed</span></p>
@@ -60,14 +86,14 @@
                 <form action="{% url 'poll-report' %}" method="POST" id="report-section/{{ data.id }}">
                     {% csrf_token %}
                     <input type="hidden" value="{{ data.id }}" name="poll_id">
-                </form>
+                </form><br>
 
-                <p><a href="/poll/{{ data.id }}/comments">Leave a comment</a></p>
             {% endif %}
         {% endfor %}
-
-        <a href="/poll/{{ data.id }}">Pass now</a> <br>
-        <a href="/poll/{{ data.id }}/stats">View Statistics</a> <br>
+</td>
+  </tbody>
+</table>
+    </div>
 
     {% endfor %}
 
