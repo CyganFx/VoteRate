@@ -5,8 +5,7 @@
 {% block title %}Dashboard{% endblock %}
 
 {% block contents %}
-    <a href="{% url 'my-surveys-new' %}">Create new</a>
-    {% if user.is_authenticated %}
+   {% if user.is_authenticated %}
              {% if mySurveys %}
             <div>
                     <h1>My Surveys</h1>
@@ -22,35 +21,66 @@
                 {% endfor %}
         {% endif %}
 
+
+
+
                  <h4>Total {{ total }} surveys. {{ totalViews }} times viewed</h4>
-                 <table>
-                    <tr>
-                        <th>Topic</th>
-                        <th>Category</th>
-                        <th>Top number</th>
-                        <th>Actions</th>
-                    </tr>
+
                  {% for cs in mySurveys %}
-                     <tr>
-                        <td>
-                            <h3><a href="{% url 'my-survey' cs.pk %}">{{cs.topic}}</a></h3>
-                        </td>
-                        <td>
-                            <p>{{ cs.category }}</p>
-                        </td>
-                        <td>
-                            <p>{{ cs.top_number }}</p>
-                        </td>
-                        <td>
-                            <a href="{% url 'my-surveys-change' cs.pk %}">&#x270E;</a>
+
+             <div class="polls" style="border: 1px solid black; margin-left: 3px">
+
+     <table class="table table-hover" style="margin: 5px; font-size: 13px">
+  <thead>
+    <tr class="table-secondary">
+      <th style="padding-right: 50px">Title</th>
+        <th style="padding-right: 100px">Category</th>
+      <th style="padding-right: 100px">Top Number</th>
+        <th style="padding-right: 50px">Actions</th>
+        <th style="padding-right: 50px">Actions2</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="border-right: 1px solid black"><br>
+             <h3><a href="{% url 'my-survey' cs.pk %}">{{cs.topic}}</a></h3>
+      </td>
+      <td style="font-size: 18px">
+
+          <p>{{ cs.category }}</p>
+      </td>
+
+      <td style="font-size: 18px">
+
+          <p>{{ cs.top_number }}</p>
+
+      </td>
+        <td style="font-size: 18px">
+
+            <a href="{% url 'my-surveys-change' cs.pk %}">&#x270E;</a>
                             <form action="{% url 'my-surveys-delete' cs.id%}" method="post">
                                 {% csrf_token %}
                                 <button type="submit" class="save btn btn-default">&#x2612;</button>
                             </form>
-                        </td>
-                     </tr>
-                {% endfor %}
-                </table>
+
+        </td>
+
+        <td style="font-size: 18px">
+
+
+            <div>
+                                            {% if cs.top_number > 0 and cs.top_number|divisibleby:2 %}
+                                                <a href="{% url 'comparison-survey-pass' cs.pk %}">Pass</a>
+                                            {% endif %}
+                                            <a href="{% url 'comparison-survey-by-id' cs.pk %}">More</a>
+                                        </div>
+
+        </td>
+  </tbody>
+</table>
+    </div>
+        {% endfor %}
+
              {% else %}
                 <h3>No results found</h3>
                  <a href="{% url 'my-surveys-new' %}">Create your own comparison survey</a>
@@ -61,4 +91,9 @@
         <p>Please, <a href="{% url 'login' %}">Sign in</a> or
           <a href="{% url 'register' %}">Sign Up</a></p>
     {% endif %}
+
+    <br>
+
+     <a href="{% url 'my-surveys-new' %}"> <input type=button class="btn btn-primary" title="" value='Create new'></a>
+
 {% endblock %}

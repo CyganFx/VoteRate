@@ -13,11 +13,13 @@
 
     {% if category_list %}
         <h2>Categories</h2>
-            <a href='{% url 'comparison-survey-home' %}'>All</a>
+            <a href='{% url 'comparison-survey-home' %}'><input type=button class="btn btn-primary" title="" value='All'></a>
         {% for category in category_list %}
-            <a href='{% url 'comparison-survey-by-category' category.id %}'>{{ category.title }}</a>
+            <a href='{% url 'comparison-survey-by-category' category.id %}'><input type=button class="btn btn-primary" title="" value='{{ category.title }}'></a>
         {% endfor %}
     {% endif %}
+
+    <hr>
 
     {% if category_item %}
         <h3>Results by category: {{ category_item.title }}</h3>
@@ -28,6 +30,7 @@
              <h1>Surveys</h1>
         </div>
              <h3>Total: {{ total }}</h3>
+
         <div>
                 {% if is_paginated %}
                             <ul>
@@ -47,21 +50,60 @@
                             </ul>
                 {% endif %}
         </div>
-                 {% for cs in cSurveys %}
-                                <h2>{{ cs.topic }} - {{ cs.top_number }}</h2>
-                                <p>Category: {{ cs.category }}</p>
-                                <p>created at: {{ cs.date_created|date:'d-m-Y' }} | rating <small>{{ cs.rating }}</small></p>
-                                <p>{{ cs.description|truncatechars:15 }}</p>
-                                        <div>
+
+
+{% for cs in cSurveys %}
+
+             <div class="polls" style="border: 1px solid black; margin-left: 3px">
+
+     <table class="table table-hover" style="margin: 5px; font-size: 13px">
+  <thead>
+    <tr class="table-secondary">
+      <th style="padding-right: 50px">Title</th>
+        <th style="padding-right: 100px">Category</th>
+      <th style="padding-right: 100px">Created at</th>
+        <th style="padding-right: 50px">Description</th>
+        <th style="padding-right: 50px">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="border-right: 1px solid black"><br>
+             <h2>{{ cs.topic }} - {{ cs.top_number }}</h2>
+      </td>
+      <td style="font-size: 18px">
+
+          <p>Category: {{ cs.category }}</p>
+      </td>
+
+      <td style="font-size: 18px">
+
+          <p>created at: {{ cs.date_created|date:'d-m-Y' }} | rating <small>{{ cs.rating }}</small></p>
+
+      </td>
+        <td style="font-size: 18px">
+
+            <p>{{ cs.description|truncatechars:15 }}</p>
+
+        </td>
+
+        <td style="font-size: 18px">
+
+
+            <div>
                                             {% if cs.top_number > 0 and cs.top_number|divisibleby:2 %}
                                                 <a href="{% url 'comparison-survey-pass' cs.pk %}">Pass</a>
                                             {% endif %}
                                             <a href="{% url 'comparison-survey-by-id' cs.pk %}">More</a>
                                         </div>
-                                <hr>
-                {% endfor %}
 
-             {% else %}
+        </td>
+  </tbody>
+</table>
+    </div>
+        {% endfor %}
+
+{% else %}
 
                 <h4>No surveys added. Check later</h4>
 
