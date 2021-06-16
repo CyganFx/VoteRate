@@ -23,6 +23,7 @@ from users import views as user_views
 
 # comparison_survey is our main app
 urlpatterns = [
+    path('', user_views.index, name='index'),
     path('admin/', admin.site.urls),
     path('comparison-survey/', include('comparison_survey.urls'), name='comparison_survey-home'),
     path('poll/', include('poll.urls'), name='poll-home'),

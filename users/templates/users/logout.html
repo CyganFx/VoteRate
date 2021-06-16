@@ -1,10 +1,14 @@
 {% extends "comparison_survey/base.layout.html" %}
 {% block title %} {{ block.super }} {% endblock title %}
 {% block content %}
-    <h2>You have been logged out</h2>
-    <div class="border-top pt-3">
-        <small class="text-muted">
-            Already have an account? <a href="{% url 'login' %}">Sign In</a>
+
+    <div style="background-color: -moz-default-background-color">
+
+    <h2 style="margin-left: 20px">You have been logged out</h2>
+    <div class="border-top pt-3" style="margin-left: 20px">
+        <small class="text-muted" style="font-size: 20px">
+            Already have an account? <a href="{% url 'login' %}"> <input type=button class="btn btn-primary" title="" value='Sign IN'></a>
         </small>
+    </div>
     </div>
 {% endblock content %}

@@ -2,7 +2,7 @@
 {% load crispy_forms_tags %}
 {% block title %} {{ block.super }} {% endblock title %}
 {% block content %}
-    <div class="content-section">
+    <div class="content-section" style="margin: 20px">
         <form method="post">
             {% csrf_token %}
             <fieldset class="form-group">
@@ -15,7 +15,7 @@
         </form>
         <div class="border-top pt-3">
             <small class="text-muted">
-                Haven't registered yet? <a href="{% url 'register' %}" class="ml-2">Sign Up Now</a>
+                <h6>Haven't registered yet?</h6> <a href="{% url 'register' %}" class="ml-2"> <input type=button class="btn btn-primary" title="" value='Sign Up Now'></a>
             </small>
         </div>
     </div>

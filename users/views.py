@@ -27,6 +27,10 @@ def register(request):
     })
 
 
+def index(request):
+    return render(request, 'users/index.html')
+
+
 @login_required
 def profile(request):
     return render(request, 'users/profile.html')

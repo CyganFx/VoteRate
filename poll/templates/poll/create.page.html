@@ -4,11 +4,14 @@
 {% block content %}
     <h1 style="text-align: center">Create Poll</h1>
 
+
+    <div style="width: 1200px; margin: auto; background-color: antiquewhite     ">
+
     <form method="POST" action="{% url 'poll-create' %}">
         {% csrf_token %}
         <input type="hidden" name="host_id" value="">
         <div class="form-group">
-            <label>Category: </label>
+            <label> <b>Category:</b> </label>
             <select name="category_id" class="form-control">
                 {% for category in categories %}
                     <option value="{{ category.id }}">{{ category.name }}</option>
@@ -16,18 +19,18 @@
             </select>
         </div>
         <div class="form-group">
-            <label>Title: </label>
+            <label> <b>Title:</b> </label>
             <input type="text" name="title" value="" class="form-control">
         </div>
 
       <div class="form-group">
-            <label>Image URL: </label>
+          <label> <b>Image URL: </b></label>
             <input type="text" name="imageURL" value="" class="form-control">
         </div>
 
 <br>
-        <div class="form-group">
-            <label>Description: </label>
+        <div class="form-group" >
+            <label><b>Description: </b></label>
             <textarea name="description" cols="30" rows="10" class="form-control"></textarea>
         </div>
 
@@ -39,9 +42,12 @@
 
         <br><br>
 
-        <button type="submit" class="btn btn-primary">Create Poll</button>
+        <button type="submit" class="btn btn-primary"><b>Create Poll</b></button>
 
     </form>
     <br>
-    <button onclick="addQuestion()" class="btn btn-info">Add question</button>
+        <button onclick="addQuestion()" class="btn btn-info"><b>Add question</b></button>
+
+
+    </div>
 {% endblock content %}

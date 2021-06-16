@@ -20,14 +20,12 @@
     </div>
     <!-- End Search -->
     <br>
-    <h2>Number of polls already passed: {{ numOfPollsPassed }}</h2>
 
-    <h1>List of polls:</h1>
-
+    <legend class="border-bottom mb-4"><h2>LIST OF POLLS</h2></legend>
  {% for data in dataset %}
-     <div class="polls" style="border: 1px solid pink; margin-left: 3px" >
+     <div class="polls" style="border: 1px solid black; margin-left: 3px">
 
-     <table class="table table-hover" style="margin: 5px">
+     <table class="table table-hover" style="margin: 5px; font-size: 13px">
   <thead>
     <tr class="table-secondary">
       <th  style="padding-right: 50px"></th>
@@ -50,14 +48,14 @@
 
 
       </td>
-      <td > {{data.title}} / {{ data.description }}</td>
-      <td>{{ data.rating }}</td>
-        <td>{{ data.passedCounter }} people</td>
-         <td> {{ data.createdAt }}</td>
-         <td>{{ data.category_id.name }}</td>
+      <td style="font-size: 18px"> {{data.title}} / {{ data.description }}</td>
+      <td style="font-size: 18px">{{ data.rating }}</td>
+        <td style="font-size: 18px">{{ data.passedCounter }} people</td>
+         <td style="font-size: 18px"> {{ data.createdAt }}</td>
+         <td style="font-size: 18px">{{ data.category_id.name }}</td>
 
 
-<td>
+<td style="font-size: 18px">
         {% for poll_id in passedPolls %}
             {% if poll_id == data.id %}
                 <p>Status: <span style="color: green">Passed</span></p>
